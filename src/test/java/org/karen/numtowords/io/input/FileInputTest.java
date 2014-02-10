@@ -2,9 +2,9 @@ package org.karen.numtowords.io.input;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.karen.numtowords.exception.NumbersFileNotFoundException;
 import org.karen.numtowords.util.TestUtils;
 
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,7 +26,7 @@ public class FileInputTest {
 
     @Test
     public void createsReaderForExistingFile()
-            throws FileNotFoundException {
+            throws NumbersFileNotFoundException {
 
         files.add(testDataDirectory + "valid-numbers.txt");
 
@@ -37,9 +37,9 @@ public class FileInputTest {
         assertEquals(files.get(0), input.getCurrentFile());
     }
 
-    @Test(expected = FileNotFoundException.class)
-    public void throwsFileNotFoundExceptionForNonexistentFile()
-            throws FileNotFoundException {
+    @Test(expected = NumbersFileNotFoundException.class)
+    public void throwsExceptionForNonexistentNumbersDataFile()
+            throws NumbersFileNotFoundException {
 
         files.add("does-not-exist.txt");
 
