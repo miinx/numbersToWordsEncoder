@@ -11,6 +11,7 @@ import org.karen.numtowords.io.testdoubles.TestOutput;
 import org.karen.numtowords.util.TestUtils;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import java.io.IOException;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -42,7 +43,9 @@ public class EngineTest {
 
 
     @Test
-    public void setInputToUserInputWhenNoArgumentsGiven() {
+    public void setInputToUserInputWhenNoArgumentsGiven()
+            throws IOException {
+
         commandLineArguments = new String[0];
 
         engine.configure(commandLineArguments);
@@ -51,7 +54,9 @@ public class EngineTest {
     }
 
     @Test
-    public void setsDictionaryToSystemDictionaryWhenNoArgumentsGiven() {
+    public void setsDictionaryToSystemDictionaryWhenNoArgumentsGiven()
+            throws IOException {
+
         commandLineArguments = new String[0];
 
         engine.configure(commandLineArguments);
@@ -60,7 +65,9 @@ public class EngineTest {
     }
 
     @Test
-    public void setsDictionaryToCustomDictionaryWhenDictionaryArgumentsGiven() {
+    public void setsDictionaryToCustomDictionaryWhenDictionaryArgumentsGiven()
+            throws IOException {
+
         commandLineArguments = new String[] {"-d", dictionaryFile};
 
         engine.configure(commandLineArguments);
@@ -69,7 +76,9 @@ public class EngineTest {
     }
 
     @Test
-    public void setsInputToFileInputWhenCommandLineFileArgumentGiven() {
+    public void setsInputToFileInputWhenCommandLineFileArgumentGiven()
+            throws IOException {
+
         commandLineArguments = new String[] {inputFile1};
 
         engine.configure(commandLineArguments);
@@ -79,7 +88,9 @@ public class EngineTest {
     }
 
     @Test
-    public void setsInputToFileInputWhenMultipleCommandLineFileArgumentsGiven() {
+    public void setsInputToFileInputWhenMultipleCommandLineFileArgumentsGiven()
+            throws IOException {
+
         commandLineArguments = new String[] {inputFile1, inputFile2};
 
         engine.configure(commandLineArguments);
@@ -94,7 +105,9 @@ public class EngineTest {
     }
 
     @Test
-    public void setsCustomDictionaryAndFileInputTypeWhenBothArgumentTypesGivenWithDictionaryFirst() {
+    public void setsCustomDictionaryAndFileInputTypeWhenBothArgumentTypesGivenWithDictionaryFirst()
+            throws IOException {
+
         commandLineArguments = new String[]{"-d", dictionaryFile, inputFile1};
 
         engine.configure(commandLineArguments);
@@ -108,7 +121,9 @@ public class EngineTest {
     }
 
     @Test
-    public void setsCustomDictionaryAndFileInputTypeWhenBothArgumentTypesGivenWithDictionaryLast() {
+    public void setsCustomDictionaryAndFileInputTypeWhenBothArgumentTypesGivenWithDictionaryLast()
+            throws IOException {
+
         commandLineArguments = new String[]{inputFile1, "-d", dictionaryFile};
 
         engine.configure(commandLineArguments);
@@ -123,7 +138,9 @@ public class EngineTest {
 
 
     @Test
-    public void createsEngineForConsoleOutputAsDefault() {
+    public void createsEngineForConsoleOutputAsDefault()
+            throws IOException {
+
         commandLineArguments = new String[0];
 
         engine.configure(commandLineArguments);

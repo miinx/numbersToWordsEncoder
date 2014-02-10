@@ -8,6 +8,7 @@ import org.karen.numtowords.io.input.UserInput;
 import org.karen.numtowords.io.output.ConsoleOutput;
 import org.karen.numtowords.io.output.Output;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -23,7 +24,9 @@ public class Engine {
     public Engine() {
     }
 
-    public void configure(String[] args) {
+    public void configure(String[] args)
+            throws IOException {
+
         setInputAndDictionary(args);
         setOutput(new ConsoleOutput());
     }
@@ -52,7 +55,9 @@ public class Engine {
         return dictionary;
     }
 
-    private void setInputAndDictionary(String[] args) {
+    private void setInputAndDictionary(String[] args)
+            throws IOException {
+
         List<String> arguments = new ArrayList<String>();
         arguments.addAll(Arrays.asList(args));
 
@@ -69,12 +74,16 @@ public class Engine {
         setInputType(arguments);
     }
 
-    private void setUserDictionary(List<String> arguments, int dictionaryIndex) {
+    private void setUserDictionary(List<String> arguments, int dictionaryIndex)
+            throws IOException {
+
         String userDictionaryPath = arguments.get(dictionaryIndex);
         setDictionary(userDictionaryPath);
     }
 
-    private void setDictionary(String dictionaryPath) {
+    private void setDictionary(String dictionaryPath)
+            throws IOException {
+
         try {
             dictionary = new Dictionary(dictionaryPath);
         } catch (DictionaryNotFoundException e) {

@@ -1,16 +1,18 @@
 package org.karen.numtowords.io.input;
 
-import org.karen.numtowords.exception.NumbersFileNotFoundException;
+import org.karen.numtowords.util.FileUtils;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.List;
 import java.util.Scanner;
 
 public class FileInput implements Input {
 
-    private List<String> fileNames;
+    public static final String NUMBERS_FILE_NOT_FOUND_MESSAGE = "Numbers data file not found: ";
+
     private Scanner reader;
+    private FileUtils fileUtils = new FileUtils();
+    private List<String> fileNames;
     private String currentFile;
 
     public FileInput(List<String> fileNames) {
@@ -18,21 +20,10 @@ public class FileInput implements Input {
     }
 
     public void setReader(String fileName)
-            throws NumbersFileNotFoundException {
+            throws IOException {
 
-        FileInputStream fileInputStream = createInputStreamFromFile(fileName);
-        this.reader = new Scanner(fileInputStream);
-    }
-
-    private FileInputStream createInputStreamFromFile(String fileName)
-            throws NumbersFileNotFoundException {
-
-        try {
-            currentFile = fileName;
-            return new FileInputStream(fileName);
-        } catch (FileNotFoundException e) {
-            throw new NumbersFileNotFoundException("Numbers data file not found: " + fileName);
-        }
+        this.reader = fileUtils.loadFile(fileName, Type.FILE);
+        setCurrentFile(fileName);
     }
 
     @Override

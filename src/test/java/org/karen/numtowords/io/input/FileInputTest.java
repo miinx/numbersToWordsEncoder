@@ -5,6 +5,7 @@ import org.junit.Test;
 import org.karen.numtowords.exception.NumbersFileNotFoundException;
 import org.karen.numtowords.util.TestUtils;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,7 +27,7 @@ public class FileInputTest {
 
     @Test
     public void createsReaderForExistingFile()
-            throws NumbersFileNotFoundException {
+            throws IOException {
 
         files.add(testDataDirectory + "valid-numbers.txt");
 
@@ -39,7 +40,7 @@ public class FileInputTest {
 
     @Test(expected = NumbersFileNotFoundException.class)
     public void throwsExceptionForNonexistentNumbersDataFile()
-            throws NumbersFileNotFoundException {
+            throws IOException {
 
         files.add("does-not-exist.txt");
 
