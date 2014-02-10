@@ -17,6 +17,7 @@ public class FileInput implements Input {
     private FileUtils fileUtils = new FileUtils();
     private List<String> fileNames;
     private String currentFile;
+    private FileInputStream fileInputStream;
 
     public FileInput(List<String> fileNames) {
         this.fileNames = fileNames;
@@ -25,11 +26,8 @@ public class FileInput implements Input {
     public void setReader(String fileName)
             throws IOException, FileNotValidException {
 
-        FileInputStream fileInputStream = fileUtils.loadFile(fileName, Type.FILE);
-        this.reader = new Scanner(fileInputStream);
-
-        fileUtils.validate(fileName, fileInputStream, Type.FILE);
-
+        loadFile(fileName);
+        validateFile(fileName);
         setCurrentFile(fileName);
     }
 
@@ -54,4 +52,18 @@ public class FileInput implements Input {
     public void setCurrentFile(String currentFile) {
         this.currentFile = currentFile;
     }
+
+    private void loadFile(String fileName)
+            throws IOException {
+
+        fileInputStream = fileUtils.loadFile(fileName, Type.FILE);
+        this.reader = new Scanner(fileInputStream);
+    }
+
+    private void validateFile(String fileName)
+            throws IOException, FileNotValidException {
+
+        fileUtils.validate(fileName, fileInputStream, Type.FILE);
+    }
+
 }

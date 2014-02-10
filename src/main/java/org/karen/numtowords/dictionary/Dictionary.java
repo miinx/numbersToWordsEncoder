@@ -15,18 +15,18 @@ public class Dictionary implements Input {
     public static final String VALID_DICTIONARY_LINE_REGEX = "^[^\\d ]*$";
 
     private Scanner reader;
+    private FileUtils fileUtils = new FileUtils();
+    private FileInputStream fileInputStream;
     private String dictionaryFileName;
 
     public Dictionary(String dictionaryFileName)
             throws IOException, FileNotValidException {
 
-        FileUtils fileUtils = new FileUtils();
-        FileInputStream fileInputStream = fileUtils.loadFile(dictionaryFileName, Type.DICTIONARY);
-
         this.dictionaryFileName = dictionaryFileName;
+        this.fileInputStream = loadDictionary(dictionaryFileName);
         this.reader = new Scanner(fileInputStream);
 
-        fileUtils.validate(dictionaryFileName, fileInputStream, Type.DICTIONARY);
+        validateDictionaryFile(dictionaryFileName);
     }
 
     public String getDictionaryFileName() {
@@ -41,6 +41,16 @@ public class Dictionary implements Input {
     @Override
     public Type getType() {
         return Type.DICTIONARY;
+    }
+
+    private FileInputStream loadDictionary(String dictionaryFileName)
+            throws IOException {
+        return fileUtils.loadFile(dictionaryFileName, Type.DICTIONARY);
+    }
+
+    private void validateDictionaryFile(String dictionaryFileName)
+            throws IOException, FileNotValidException {
+        fileUtils.validate(dictionaryFileName, fileInputStream, Type.DICTIONARY);
     }
 
 }
