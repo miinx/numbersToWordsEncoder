@@ -8,19 +8,17 @@ import org.karen.numtowords.io.input.Input;
 
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.Scanner;
 
 public class FileUtils {
 
     public FileUtils() {
     }
 
-    public Scanner loadFile(String fileName, Input.Type inputType)
+    public FileInputStream loadFile(String fileName, Input.Type inputType)
         throws IOException {
 
-        FileInputStream fileInputStream;
         try {
-            fileInputStream = new FileInputStream(fileName);
+            return new FileInputStream(fileName);
 
         } catch (java.io.FileNotFoundException e) {
 
@@ -30,7 +28,7 @@ public class FileUtils {
                 throw new DictionaryNotFoundException(Dictionary.DICTIONARY_NOT_FOUND_MESSAGE + fileName, e);
             }
         }
-        return new Scanner(fileInputStream);
+
     }
 
 }

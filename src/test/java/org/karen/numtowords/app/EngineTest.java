@@ -4,6 +4,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.karen.numtowords.dictionary.Dictionary;
+import org.karen.numtowords.exception.FileNotValidException;
 import org.karen.numtowords.io.input.FileInput;
 import org.karen.numtowords.io.input.Input;
 import org.karen.numtowords.io.output.Output;
@@ -44,7 +45,7 @@ public class EngineTest {
 
     @Test
     public void setInputToUserInputWhenNoArgumentsGiven()
-            throws IOException {
+            throws IOException, FileNotValidException {
 
         commandLineArguments = new String[0];
 
@@ -55,7 +56,7 @@ public class EngineTest {
 
     @Test
     public void setsDictionaryToSystemDictionaryWhenNoArgumentsGiven()
-            throws IOException {
+            throws IOException, FileNotValidException {
 
         commandLineArguments = new String[0];
 
@@ -66,7 +67,7 @@ public class EngineTest {
 
     @Test
     public void setsDictionaryToCustomDictionaryWhenDictionaryArgumentsGiven()
-            throws IOException {
+            throws IOException, FileNotValidException {
 
         commandLineArguments = new String[] {"-d", dictionaryFile};
 
@@ -77,7 +78,7 @@ public class EngineTest {
 
     @Test
     public void setsInputToFileInputWhenCommandLineFileArgumentGiven()
-            throws IOException {
+            throws IOException, FileNotValidException {
 
         commandLineArguments = new String[] {inputFile1};
 
@@ -89,7 +90,7 @@ public class EngineTest {
 
     @Test
     public void setsInputToFileInputWhenMultipleCommandLineFileArgumentsGiven()
-            throws IOException {
+            throws IOException, FileNotValidException {
 
         commandLineArguments = new String[] {inputFile1, inputFile2};
 
@@ -106,7 +107,7 @@ public class EngineTest {
 
     @Test
     public void setsCustomDictionaryAndFileInputTypeWhenBothArgumentTypesGivenWithDictionaryFirst()
-            throws IOException {
+            throws IOException, FileNotValidException {
 
         commandLineArguments = new String[]{"-d", dictionaryFile, inputFile1};
 
@@ -122,7 +123,7 @@ public class EngineTest {
 
     @Test
     public void setsCustomDictionaryAndFileInputTypeWhenBothArgumentTypesGivenWithDictionaryLast()
-            throws IOException {
+            throws IOException, FileNotValidException {
 
         commandLineArguments = new String[]{inputFile1, "-d", dictionaryFile};
 
@@ -139,7 +140,7 @@ public class EngineTest {
 
     @Test
     public void createsEngineForConsoleOutputAsDefault()
-            throws IOException {
+            throws IOException, FileNotValidException {
 
         commandLineArguments = new String[0];
 

@@ -2,6 +2,7 @@ package org.karen.numtowords.io.input;
 
 import org.karen.numtowords.util.FileUtils;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.List;
 import java.util.Scanner;
@@ -22,7 +23,8 @@ public class FileInput implements Input {
     public void setReader(String fileName)
             throws IOException {
 
-        this.reader = fileUtils.loadFile(fileName, Type.FILE);
+        FileInputStream fileInputStream = fileUtils.loadFile(fileName, Type.FILE);
+        this.reader = new Scanner(fileInputStream);
         setCurrentFile(fileName);
     }
 

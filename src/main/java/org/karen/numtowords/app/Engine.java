@@ -2,6 +2,7 @@ package org.karen.numtowords.app;
 
 import org.karen.numtowords.dictionary.Dictionary;
 import org.karen.numtowords.exception.DictionaryNotFoundException;
+import org.karen.numtowords.exception.FileNotValidException;
 import org.karen.numtowords.io.input.FileInput;
 import org.karen.numtowords.io.input.Input;
 import org.karen.numtowords.io.input.UserInput;
@@ -25,7 +26,7 @@ public class Engine {
     }
 
     public void configure(String[] args)
-            throws IOException {
+            throws IOException, FileNotValidException {
 
         setInputAndDictionary(args);
         setOutput(new ConsoleOutput());
@@ -56,7 +57,7 @@ public class Engine {
     }
 
     private void setInputAndDictionary(String[] args)
-            throws IOException {
+            throws IOException, FileNotValidException {
 
         List<String> arguments = new ArrayList<String>();
         arguments.addAll(Arrays.asList(args));
@@ -75,14 +76,14 @@ public class Engine {
     }
 
     private void setUserDictionary(List<String> arguments, int dictionaryIndex)
-            throws IOException {
+            throws IOException, FileNotValidException {
 
         String userDictionaryPath = arguments.get(dictionaryIndex);
         setDictionary(userDictionaryPath);
     }
 
     private void setDictionary(String dictionaryPath)
-            throws IOException {
+            throws IOException, FileNotValidException {
 
         try {
             dictionary = new Dictionary(dictionaryPath);
