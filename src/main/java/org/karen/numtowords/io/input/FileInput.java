@@ -1,5 +1,6 @@
 package org.karen.numtowords.io.input;
 
+import org.karen.numtowords.exception.FileNotValidException;
 import org.karen.numtowords.util.FileUtils;
 
 import java.io.FileInputStream;
@@ -10,6 +11,7 @@ import java.util.Scanner;
 public class FileInput implements Input {
 
     public static final String NUMBERS_FILE_NOT_FOUND_MESSAGE = "Numbers data file not found: ";
+    public static final String VALID_NUMBERS_LINE_REGEX = "^[^a-zA-Z]*$";
 
     private Scanner reader;
     private FileUtils fileUtils = new FileUtils();
@@ -21,10 +23,13 @@ public class FileInput implements Input {
     }
 
     public void setReader(String fileName)
-            throws IOException {
+            throws IOException, FileNotValidException {
 
         FileInputStream fileInputStream = fileUtils.loadFile(fileName, Type.FILE);
         this.reader = new Scanner(fileInputStream);
+
+        fileUtils.validate(fileName, fileInputStream, Type.FILE);
+
         setCurrentFile(fileName);
     }
 
