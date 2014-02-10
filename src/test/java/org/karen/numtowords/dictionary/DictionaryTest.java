@@ -1,10 +1,10 @@
 package org.karen.numtowords.dictionary;
 
 import org.junit.Test;
+import org.karen.numtowords.exception.DictionaryNotFoundException;
 import org.karen.numtowords.util.TestUtils;
 
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.util.Scanner;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -20,7 +20,9 @@ public class DictionaryTest {
     private String validDictionary = testDataDirectory + "valid-dictionary.txt";
 
     @Test
-    public void loadsExistingDictionaryFile() throws FileNotFoundException {
+    public void loadsExistingDictionaryFile()
+            throws DictionaryNotFoundException {
+
         dictionary = new Dictionary(validDictionary);
 
         assertNotNull(dictionary);
@@ -29,8 +31,10 @@ public class DictionaryTest {
         assertThat(dictionary.getReader(), isA(Scanner.class));
     }
 
-    @Test(expected = FileNotFoundException.class)
-    public void throwsExceptionForNonExistentDictionaryFile() throws FileNotFoundException {
+    @Test(expected = DictionaryNotFoundException.class)
+    public void throwsExceptionForNonExistentDictionaryFile()
+            throws DictionaryNotFoundException {
+
         dictionary = new Dictionary("does-not-exist.txt");
     }
 

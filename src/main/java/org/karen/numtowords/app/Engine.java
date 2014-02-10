@@ -1,6 +1,7 @@
 package org.karen.numtowords.app;
 
 import org.karen.numtowords.dictionary.Dictionary;
+import org.karen.numtowords.exception.DictionaryNotFoundException;
 import org.karen.numtowords.io.input.FileInput;
 import org.karen.numtowords.io.input.Input;
 import org.karen.numtowords.io.input.UserInput;
@@ -18,7 +19,6 @@ public class Engine {
     private Input input;
     private Output output;
     private Dictionary dictionary;
-
 
     public Engine() {
     }
@@ -77,7 +77,7 @@ public class Engine {
     private void setDictionary(String dictionaryPath) {
         try {
             dictionary = new Dictionary(dictionaryPath);
-        } catch (Throwable e) {
+        } catch (DictionaryNotFoundException e) {
             output.write(e.getMessage());
         }
     }
