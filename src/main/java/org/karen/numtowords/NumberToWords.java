@@ -12,12 +12,8 @@ public class NumberToWords {
     public static void main(String[] args)
             throws IOException, FileNotValidException {
 
-        NumberToWords numberToWords = new NumberToWords().createInstance();
+        NumberToWords numberToWords = new NumberToWords();
         numberToWords.run(args);
-    }
-
-    public NumberToWords createInstance() {
-        return new NumberToWords();
     }
 
     public void run(String[] args)
@@ -27,6 +23,7 @@ public class NumberToWords {
 
         engine.configure(args);
         engine.writeWelcomeMessage();
+
     }
 
     public Engine getEngine() {
