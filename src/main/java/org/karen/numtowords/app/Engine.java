@@ -8,7 +8,6 @@ import org.karen.numtowords.io.input.UserInput;
 import org.karen.numtowords.io.output.ConsoleOutput;
 import org.karen.numtowords.io.output.Output;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -16,7 +15,7 @@ import java.util.List;
 
 public class Engine {
 
-    // todo: check all getters & setters are needed
+    // todo: check all getters & setters are needed (other classes too)
 
     public static final String WELCOME_MESSAGE = "Welcome to the Number to Words Generator.";
 
@@ -30,78 +29,90 @@ public class Engine {
     public void configure(String[] args)
             throws IOException, FileNotValidException {
 
-        setInputAndDictionary(args);
+        processArgs(args);
         setOutput(new ConsoleOutput());
+
+        // todo: success messages for files loaded
     }
 
     public void writeWelcomeMessage() {
         output.write(WELCOME_MESSAGE);
     }
 
-    public void setInput(Input input) {
-        this.input = input;
+    private void processArgs(String[] args)
+            throws IOException, FileNotValidException {
+
+        if (args.length == 0) {
+            input = UserInput.load();
+            dictionary = Dictionary.load(Dictionary.MACOSX_SYSTEM_DICTIONARY_PATH);
+
+        } else {
+            parseArgs(args);
+        }
     }
 
-    public Input getInput() {
-        return input;
-    }
-
-    public void setOutput(Output output) {
-        this.output = output;
-    }
-
-    public Output getOutput() {
-        return output;
-    }
-
-    public Dictionary getDictionary() {
-        return dictionary;
-    }
-
-    private void setInputAndDictionary(String[] args)
+    private void parseArgs(String[] args)
             throws IOException, FileNotValidException {
 
         List<String> arguments = new ArrayList<String>();
         arguments.addAll(Arrays.asList(args));
 
-        if (arguments.contains("-d")) {
-            int dictionaryArgIndex = arguments.indexOf("-d");
-            setUserDictionary(arguments, dictionaryArgIndex + 1);
+        List<String> numbersDataFiles = new ArrayList<String>();
 
-            arguments.subList(dictionaryArgIndex, dictionaryArgIndex + 2).clear();
+        while (arguments.size() > 0) {
 
-        } else {
-            setDictionary(Dictionary.MACOSX_SYSTEM_DICTIONARY_PATH);
+            if (arguments.get(0).equals("-d")) {
+                List<String> dictionaryArgs = arguments.subList(0, 2);
+
+                setDictionary(dictionaryArgs);
+
+                // todo: arguments.removeAll(dictionaryArgs) throws ConcurrentModificationException.. better way?
+                arguments.remove(0);
+                arguments.remove(0);
+
+            } else {
+                numbersDataFiles.add(arguments.remove(0));
+            }
+
         }
 
-        setInputType(arguments);
+        if (numbersDataFiles.size() > 0) {
+            setInput(numbersDataFiles);
+        }
     }
 
-    private void setUserDictionary(List<String> arguments, int dictionaryIndex)
+    // todo test output messages are correct for caught exceptions
+    private void setDictionary(List<String> dictionaryArgs)
             throws IOException, FileNotValidException {
 
-        String userDictionaryPath = arguments.get(dictionaryIndex);
-        setDictionary(userDictionaryPath);
-    }
-
-    // todo create static method around constructors
-    // todo test output messages for caught exceptions
-    private void setDictionary(String dictionaryPath)
-            throws IOException, FileNotValidException {
+        String userDictionary = dictionaryArgs.get(1);
 
         try {
-            dictionary = Dictionary.load(dictionaryPath);
-        } catch (FileNotFoundException e) {
+            dictionary = Dictionary.load(userDictionary);
+
+        } catch (Exception e) {
             output.write(e.getMessage());
         }
     }
 
-    private void setInputType(List<String> arguments) {
-        if (arguments.size() == 0) {
-            setInput(UserInput.load());
-        } else {
-            setInput(FileInput.loadFiles(arguments));
-        }
+    private void setInput(List<String> arguments) {
+        input = FileInput.loadFiles(arguments);
+    }
+
+    void setOutput(Output output) {
+        this.output = output;
+    }
+
+    Input getInput() {
+        return input;
+    }
+
+    Output getOutput() {
+        return output;
+    }
+
+    Dictionary getDictionary() {
+        return dictionary;
     }
 
 }

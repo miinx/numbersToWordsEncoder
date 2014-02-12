@@ -38,20 +38,20 @@ public class Dictionary implements Input {
         return Type.DICTIONARY;
     }
 
-    private void validateDictionaryFile(String dictionaryFileName)
-            throws IOException, FileNotValidException {
-        
-        fileUtils.validate(dictionaryFileName, fileInputStream, Type.DICTIONARY);
-    }
-
     private Dictionary(String dictionaryFileName)
             throws IOException, FileNotValidException {
 
-        this.dictionaryFileName = dictionaryFileName;
+        this.dictionaryFileName = dictionaryFileName;           // todo: is this really needed?
         this.fileInputStream = fileUtils.loadFile(dictionaryFileName);
         this.reader = new Scanner(fileInputStream);
 
-        validateDictionaryFile(dictionaryFileName);
+        validate(dictionaryFileName);
+    }
+
+    private void validate(String dictionaryFileName)
+            throws IOException, FileNotValidException {
+
+        fileUtils.validate(dictionaryFileName, fileInputStream, Type.DICTIONARY);
     }
 
 }
