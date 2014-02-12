@@ -11,7 +11,6 @@ import java.util.Scanner;
 public class Dictionary implements Input {
 
     public static final String MACOSX_SYSTEM_DICTIONARY_PATH = "/usr/share/dict/words";
-    public static final String DICTIONARY_NOT_FOUND_MESSAGE = "Dictionary file not found: ";
     public static final String VALID_DICTIONARY_LINE_REGEX = "^[^\\d ]*$";
 
     private Scanner reader;
@@ -39,29 +38,17 @@ public class Dictionary implements Input {
         return Type.DICTIONARY;
     }
 
-    private FileInputStream loadDictionary(String dictionaryFileName)
-            throws IOException {
-        return fileUtils.loadFile(dictionaryFileName, Type.DICTIONARY);
-    }
-
     private void validateDictionaryFile(String dictionaryFileName)
             throws IOException, FileNotValidException {
+        
         fileUtils.validate(dictionaryFileName, fileInputStream, Type.DICTIONARY);
-    }
-
-    public String getAsDelimitedString() {
-        String dict = "";
-        while (reader.hasNextLine()) {
-            dict += reader.nextLine() + " ";
-        }
-        return dict.replace("\n", "");
     }
 
     private Dictionary(String dictionaryFileName)
             throws IOException, FileNotValidException {
 
         this.dictionaryFileName = dictionaryFileName;
-        this.fileInputStream = fileUtils.loadFile(dictionaryFileName, Type.DICTIONARY);
+        this.fileInputStream = fileUtils.loadFile(dictionaryFileName);
         this.reader = new Scanner(fileInputStream);
 
         validateDictionaryFile(dictionaryFileName);

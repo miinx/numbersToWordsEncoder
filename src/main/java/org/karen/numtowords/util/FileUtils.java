@@ -1,16 +1,11 @@
 package org.karen.numtowords.util;
 
 import org.karen.numtowords.dictionary.Dictionary;
-import org.karen.numtowords.exception.DictionaryNotFoundException;
 import org.karen.numtowords.exception.FileNotValidException;
-import org.karen.numtowords.exception.NumbersFileNotFoundException;
 import org.karen.numtowords.io.input.FileInput;
 import org.karen.numtowords.io.input.Input;
 
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,25 +14,13 @@ public class FileUtils {
     public static final String FILE_CONTAINS_INVALID_LINES_MESSAGE = " contains the following invalid lines: ";
     private static final String UNEXPECTED_VALIDATION_EXCEPTION = "An unexpected error occurred while validating the file - ";
 
-    private static String VALID_LINE_REGEX;
-
     public FileUtils() {
     }
 
-    public FileInputStream loadFile(String fileName, Input.Type inputType)
-            throws IOException {
+    public FileInputStream loadFile(String fileName)
+            throws FileNotFoundException {
 
-        try {
-            return new FileInputStream(fileName);
-
-        } catch (java.io.FileNotFoundException e) {
-
-            if (Input.Type.FILE.equals(inputType)) {
-                throw new NumbersFileNotFoundException(FileInput.NUMBERS_FILE_NOT_FOUND_MESSAGE + fileName, e);
-            } else {
-                throw new DictionaryNotFoundException(Dictionary.DICTIONARY_NOT_FOUND_MESSAGE + fileName, e);
-            }
-        }
+        return new FileInputStream(fileName);
     }
 
     public void validate(String fileName, FileInputStream fileInputStream, Input.Type inputType)
@@ -47,7 +30,7 @@ public class FileUtils {
         List<String> invalidLines = new ArrayList<String>();
         String line;
 
-        VALID_LINE_REGEX = setValidRegex(inputType);
+        String VALID_LINE_REGEX = setValidRegex(inputType);
 
         try {
             while ((line = br.readLine()) != null) {
@@ -80,7 +63,6 @@ public class FileUtils {
         }
     }
 
-    // TODO Make protected -> package private
     String buildFileNotValidExceptionMessage(String fileName, List<String> invalidLines)
             throws FileNotValidException {
 

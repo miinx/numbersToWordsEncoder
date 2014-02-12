@@ -1,10 +1,10 @@
 package org.karen.numtowords.dictionary;
 
 import org.junit.Test;
-import org.karen.numtowords.exception.DictionaryNotFoundException;
 import org.karen.numtowords.exception.FileNotValidException;
 import org.karen.numtowords.util.TestUtils;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Scanner;
 
@@ -33,7 +33,7 @@ public class DictionaryTest {
         assertThat(dictionary.getReader(), isA(Scanner.class));
     }
 
-    @Test(expected = DictionaryNotFoundException.class)
+    @Test(expected = FileNotFoundException.class)
     public void throwsExceptionForNonExistentDictionaryFile()
             throws IOException, FileNotValidException {
 
@@ -53,7 +53,5 @@ public class DictionaryTest {
 
         dictionary = Dictionary.load(invalidDictionaryWithMultipleWordsPerLine);
     }
-
-    // todo: ensure no more Throwable
 
 }

@@ -10,7 +10,6 @@ import java.util.Scanner;
 
 public class FileInput implements Input {
 
-    public static final String NUMBERS_FILE_NOT_FOUND_MESSAGE = "Numbers data file not found: ";
     public static final String VALID_NUMBERS_LINE_REGEX = "^[^a-zA-Z]*$";
 
     private Scanner reader;
@@ -56,7 +55,7 @@ public class FileInput implements Input {
     private void loadFile(String fileName)
             throws IOException {
 
-        fileInputStream = fileUtils.loadFile(fileName, Type.FILE);
+        fileInputStream = fileUtils.loadFile(fileName);
         this.reader = new Scanner(fileInputStream);
     }
 

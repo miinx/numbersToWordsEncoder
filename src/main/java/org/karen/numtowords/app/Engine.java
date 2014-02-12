@@ -1,7 +1,6 @@
 package org.karen.numtowords.app;
 
 import org.karen.numtowords.dictionary.Dictionary;
-import org.karen.numtowords.exception.DictionaryNotFoundException;
 import org.karen.numtowords.exception.FileNotValidException;
 import org.karen.numtowords.io.input.FileInput;
 import org.karen.numtowords.io.input.Input;
@@ -9,6 +8,7 @@ import org.karen.numtowords.io.input.UserInput;
 import org.karen.numtowords.io.output.ConsoleOutput;
 import org.karen.numtowords.io.output.Output;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -85,12 +85,13 @@ public class Engine {
     }
 
     // todo create static method around constructors
+    // todo test output messages for caught exceptions
     private void setDictionary(String dictionaryPath)
             throws IOException, FileNotValidException {
 
         try {
             dictionary = Dictionary.load(dictionaryPath);
-        } catch (DictionaryNotFoundException e) {
+        } catch (FileNotFoundException e) {
             output.write(e.getMessage());
         }
     }

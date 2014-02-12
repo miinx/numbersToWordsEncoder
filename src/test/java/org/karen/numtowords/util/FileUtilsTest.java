@@ -1,16 +1,17 @@
 package org.karen.numtowords.util;
 
 import org.junit.Test;
-import org.karen.numtowords.exception.DictionaryNotFoundException;
 import org.karen.numtowords.exception.FileNotValidException;
-import org.karen.numtowords.exception.NumbersFileNotFoundException;
 import org.karen.numtowords.io.input.Input;
 
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.isA;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
@@ -27,40 +28,27 @@ public class FileUtilsTest {
     private String invalidNumbersDataWithWords = testDataDir + "invalid-numbers--words.txt";
 
     @Test
-    public void createsFileInputStreamForExistingDictionaryFile()
+    public void createsFileInputStreamForExistingFile()
             throws IOException {
 
-        FileInputStream fileInputStream = fileUtils.loadFile(validDictionary, Input.Type.DICTIONARY);
+        FileInputStream fileInputStream = fileUtils.loadFile(validDictionary);
+
         assertNotNull(fileInputStream);
+        assertThat(fileInputStream, isA(FileInputStream.class));
     }
 
-    @Test
-    public void createsFileInputStreamForExistingNumbersDataFile()
+    @Test(expected = FileNotFoundException.class)
+    public void throwsExceptionWhenFileIsNotFound()
             throws IOException {
 
-        FileInputStream fileInputStream = fileUtils.loadFile(validNumbersData, Input.Type.FILE);
-        assertNotNull(fileInputStream);
-    }
-
-    @Test(expected = DictionaryNotFoundException.class)
-    public void throwsExceptionWhenDictionaryFileIsNotFound()
-            throws IOException {
-
-        fileUtils.loadFile("does-not-exist.txt", Input.Type.DICTIONARY);
-    }
-
-    @Test(expected = NumbersFileNotFoundException.class)
-    public void throwsExceptionWhenNumbersDataFileIsNotFound()
-            throws IOException {
-
-        fileUtils.loadFile("does-not-exist.txt", Input.Type.FILE);
+        fileUtils.loadFile("does-not-exist.txt");
     }
 
     @Test
     public void validatesValidDictionaryFile()
             throws IOException, FileNotValidException {
 
-        FileInputStream fileInputStream = fileUtils.loadFile(validDictionary, Input.Type.DICTIONARY);
+        FileInputStream fileInputStream = fileUtils.loadFile(validDictionary);
         fileUtils.validate(validDictionary, fileInputStream, Input.Type.DICTIONARY);
 
         // todo: nothing to assert? error thrown if invalid, no error thus test passes!
@@ -70,7 +58,7 @@ public class FileUtilsTest {
     public void validatesValidNumbersDataFile()
             throws IOException, FileNotValidException {
 
-        FileInputStream fileInputStream = fileUtils.loadFile(validNumbersData, Input.Type.FILE);
+        FileInputStream fileInputStream = fileUtils.loadFile(validNumbersData);
         fileUtils.validate(validNumbersData, fileInputStream, Input.Type.FILE);
 
         // todo: as above, nothing can be asserted?
@@ -80,7 +68,7 @@ public class FileUtilsTest {
     public void throwsExceptionForInvalidDictionaryContainingNumbers()
             throws IOException, FileNotValidException {
 
-        FileInputStream fileInputStream = fileUtils.loadFile(invalidDictionaryWithNumbers, Input.Type.DICTIONARY);
+        FileInputStream fileInputStream = fileUtils.loadFile(invalidDictionaryWithNumbers);
         fileUtils.validate(invalidDictionaryWithNumbers, fileInputStream, Input.Type.DICTIONARY);
     }
 
@@ -88,7 +76,7 @@ public class FileUtilsTest {
     public void throwsExceptionForInvalidDictionaryContainingMultipleWordsPerLine()
             throws IOException, FileNotValidException {
 
-        FileInputStream fileInputStream = fileUtils.loadFile(invalidDictionaryWithMultipleWordsPerLine, Input.Type.DICTIONARY);
+        FileInputStream fileInputStream = fileUtils.loadFile(invalidDictionaryWithMultipleWordsPerLine);
         fileUtils.validate(invalidDictionaryWithMultipleWordsPerLine, fileInputStream, Input.Type.DICTIONARY);
     }
 
@@ -96,7 +84,7 @@ public class FileUtilsTest {
     public void throwsExceptionForInvalidNumbersData()
             throws IOException, FileNotValidException {
 
-        FileInputStream fileInputStream = fileUtils.loadFile(invalidNumbersDataWithWords, Input.Type.FILE);
+        FileInputStream fileInputStream = fileUtils.loadFile(invalidNumbersDataWithWords);
         fileUtils.validate(invalidNumbersDataWithWords, fileInputStream, Input.Type.FILE);
     }
 
