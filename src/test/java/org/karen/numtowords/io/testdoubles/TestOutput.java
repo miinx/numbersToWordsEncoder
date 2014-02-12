@@ -19,11 +19,6 @@ public class TestOutput implements Output {
         this.out.print(message);
     }
 
-    @Override
-    public Type getType() {
-        return Type.CAPTURED;
-    }
-
     public String getOutput() {
         return buffer.toString();
     }

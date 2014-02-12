@@ -15,9 +15,4 @@ public class ConsoleOutput implements Output {
         out.print(message);
     }
 
-    @Override
-    public Type getType() {
-        return Type.CONSOLE;
-    }
-
 }
