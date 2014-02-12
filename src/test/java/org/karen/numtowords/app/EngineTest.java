@@ -23,16 +23,21 @@ public class EngineTest {
 
     private Engine engine;
     private TestOutput testOutput = new TestOutput();
-    private TestUtils testUtils = new TestUtils();
-    private String testDataDir = testUtils.getTestClassesDirectory() + "data/";
     private String[] commandLineArguments;
-    String dictionaryFile = testDataDir + "valid-dictionary.txt";
-    String inputFile1 = testDataDir + "valid-numbers.txt";
-    String inputFile2 = testDataDir + "invalid-numbers.txt";
+
+    private String dictionaryFile;
+    private String dataFile1;
+    private String dataFile2;
 
     @Before
-    public void setup(){
+    public void setup()
+            throws IOException {
+
         engine = new Engine();
+
+        dictionaryFile =  TestUtils.createTempFileWithProvidedLines("dictionary", "apple`").getPath();
+        dataFile1 =  TestUtils.createTempFileWithProvidedLines("numbers1", "11111").getPath();
+        dataFile2 =  TestUtils.createTempFileWithProvidedLines("numbers2", "22222").getPath();
     }
 
     @Test
@@ -69,7 +74,7 @@ public class EngineTest {
     public void setsDictionaryToCustomDictionaryWhenDictionaryArgumentsGiven()
             throws IOException, FileNotValidException {
 
-        commandLineArguments = new String[] {"-d", dictionaryFile};
+        commandLineArguments = new String[]{"-d", dictionaryFile};
 
         engine.configure(commandLineArguments);
 
@@ -80,7 +85,7 @@ public class EngineTest {
     public void setsInputToFileInputWhenCommandLineFileArgumentGiven()
             throws IOException, FileNotValidException {
 
-        commandLineArguments = new String[] {inputFile1};
+        commandLineArguments = new String[]{ dataFile1 };
 
         engine.configure(commandLineArguments);
 
@@ -92,7 +97,7 @@ public class EngineTest {
     public void setsInputToFileInputWhenMultipleCommandLineFileArgumentsGiven()
             throws IOException, FileNotValidException {
 
-        commandLineArguments = new String[] {inputFile1, inputFile2};
+        commandLineArguments = new String[] {dataFile1, dataFile2};
 
         engine.configure(commandLineArguments);
 
@@ -100,23 +105,23 @@ public class EngineTest {
         assertThat(input.getType(), is(Input.Type.FILE));
 
         FileInput fileInput = (FileInput) input;
-        assertThat(fileInput.getFileNames().size(), is(2));
-        assertThat(fileInput.getFileNames().get(0), is(inputFile1));
-        assertThat(fileInput.getFileNames().get(1), is(inputFile2));
+        assertThat(fileInput.getFilePaths().size(), is(2));
+        assertThat(fileInput.getFilePaths().get(0), is(dataFile1));
+        assertThat(fileInput.getFilePaths().get(1), is(dataFile2));
     }
 
     @Test
     public void setsCustomDictionaryAndFileInputTypeWhenBothArgumentTypesGivenWithDictionaryFirst()
             throws IOException, FileNotValidException {
 
-        commandLineArguments = new String[]{"-d", dictionaryFile, inputFile1};
+        commandLineArguments = new String[]{"-d", dictionaryFile, dataFile1};
 
         engine.configure(commandLineArguments);
 
         FileInput input = (FileInput) engine.getInput();
-        List<String> fileNames = input.getFileNames();
+        List<String> fileNames = input.getFilePaths();
         assertThat(fileNames.size(), is(1));
-        assertThat(fileNames.get(0), is(inputFile1));
+        assertThat(fileNames.get(0), is(dataFile1));
 
         assertThat(engine.getDictionary().getDictionaryFile().getPath(), is(dictionaryFile));
     }
@@ -125,14 +130,14 @@ public class EngineTest {
     public void setsCustomDictionaryAndFileInputTypeWhenBothArgumentTypesGivenWithDictionaryLast()
             throws IOException, FileNotValidException {
 
-        commandLineArguments = new String[]{inputFile1, "-d", dictionaryFile};
+        commandLineArguments = new String[]{dataFile1, "-d", dictionaryFile};
 
         engine.configure(commandLineArguments);
 
         FileInput input = (FileInput) engine.getInput();
-        List<String> fileNames = input.getFileNames();
+        List<String> fileNames = input.getFilePaths();
         assertThat(fileNames.size(), is(1));
-        assertThat(fileNames.get(0), is(inputFile1));
+        assertThat(fileNames.get(0), is(dataFile1));
 
         assertThat(engine.getDictionary().getDictionaryFile().getPath(), is(dictionaryFile));
     }

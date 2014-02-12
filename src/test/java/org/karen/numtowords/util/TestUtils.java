@@ -4,19 +4,6 @@ import java.io.*;
 
 public class TestUtils {
 
-    public TestUtils() {
-    }
-
-    public String getTestClassesDirectory() {
-        String testClassesDirectory = "";
-        try {
-            testClassesDirectory = getClass().getClassLoader().getResource("").getPath();
-        } catch (NullPointerException e) {
-            System.out.println("Unable to determine test classes directory.");
-        }
-        return testClassesDirectory;
-    }
-
     public static File createTempFileWithProvidedLines(String fileName, String... lines)
             throws IOException {
 

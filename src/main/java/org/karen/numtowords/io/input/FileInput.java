@@ -14,20 +14,20 @@ public class FileInput implements Input {
 
     private Scanner reader;
     private FileUtils fileUtils = new FileUtils();
-    private List<String> fileNames;
+    private List<String> filePaths;
     private String currentFile;
     private FileInputStream fileInputStream;
 
-    public static FileInput loadFiles(List<String> fileNames) {
-        return new FileInput(fileNames);
+    public static FileInput loadFiles(List<String> filePaths) {
+        return new FileInput(filePaths);
     }
 
-    public void setReader(String fileName)
+    public void setReader(String filePath)
             throws IOException, FileNotValidException {
 
-        loadFile(fileName);
-        validateFile(fileName);
-        setCurrentFile(fileName);
+        loadFile(filePath);
+        validateFile(filePath);
+        setCurrentFile(filePath);
     }
 
     @Override
@@ -40,8 +40,8 @@ public class FileInput implements Input {
         return Type.FILE;
     }
 
-    public List<String> getFileNames() {
-        return fileNames;
+    public List<String> getFilePaths() {
+        return filePaths;
     }
 
     public String getCurrentFile() {
@@ -52,21 +52,21 @@ public class FileInput implements Input {
         this.currentFile = currentFile;
     }
 
-    private FileInput(List<String> fileNames) {
-        this.fileNames = fileNames;
+    private FileInput(List<String> filePaths) {
+        this.filePaths = filePaths;
     }
 
-    private void loadFile(String fileName)
+    private void loadFile(String filePath)
             throws IOException {
 
-            fileInputStream = fileUtils.loadFileInputStream(fileName);
+            fileInputStream = fileUtils.loadFileInputStream(filePath);
         this.reader = new Scanner(fileInputStream);
     }
 
-    private void validateFile(String fileName)
+    private void validateFile(String filePath)
             throws IOException, FileNotValidException {
 
-        fileUtils.validate(fileName, fileInputStream, Type.FILE);
+        fileUtils.validate(filePath, fileInputStream, Type.FILE);
     }
 
 }

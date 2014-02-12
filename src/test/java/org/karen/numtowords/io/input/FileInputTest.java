@@ -18,8 +18,6 @@ public class FileInputTest {
 
     private FileInput input;
     private List<String> files;
-    private TestUtils testUtils = new TestUtils();
-    private String testDataDirectory = testUtils.getTestClassesDirectory() + "data/";
 
     @Before
     public void setup() {
@@ -30,10 +28,11 @@ public class FileInputTest {
     public void createsReaderForExistingFile()
             throws IOException, FileNotValidException {
 
-        files.add(testDataDirectory + "valid-numbers.txt");
+        String validFile = TestUtils.createTempFileWithProvidedLines("numbers", "123").getPath();
+        files.add(validFile);
 
         input = FileInput.loadFiles(files);
-        input.setReader(input.getFileNames().get(0));
+        input.setReader(input.getFilePaths().get(0));
 
         assertNotNull(input.getReader());
         assertEquals(files.get(0), input.getCurrentFile());
@@ -46,17 +45,18 @@ public class FileInputTest {
         files.add("does-not-exist.txt");
 
         input = FileInput.loadFiles(files);
-        input.setReader(input.getFileNames().get(0));
+        input.setReader(input.getFilePaths().get(0));
     }
 
     @Test(expected = FileNotValidException.class)
     public void throwsExceptionForInvalidNumbersDataFileContainingWords()
             throws IOException, FileNotValidException {
 
-        files.add(testDataDirectory + "invalid-numbers--words.txt");
+        String invalidFile = TestUtils.createTempFileWithProvidedLines("test", "foo").getPath();
+        files.add(invalidFile);
 
         input = FileInput.loadFiles(files);
-        input.setReader(input.getFileNames().get(0));
+        input.setReader(input.getFilePaths().get(0));
     }
 
 }

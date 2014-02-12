@@ -1,5 +1,6 @@
 package org.karen.numtowords.util;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.karen.numtowords.exception.FileNotValidException;
 import org.karen.numtowords.io.input.Input;
@@ -19,16 +20,22 @@ public class FileUtilsTest {
 
     private FileUtils fileUtils = new FileUtils();
 
-    // todo: change all these to use TestUtils temp file creation
+    private String validDictionary;
+    private String validNumbersData;
+    private String invalidDictionaryWithNumbers;
+    private String invalidDictionaryWithMultipleWordsPerLine;
+    private String invalidNumbersDataWithWords;
 
-    private TestUtils testUtils = new TestUtils();
+    @Before
+    public void setup()
+            throws IOException {
 
-    private String testDataDir = testUtils.getTestClassesDirectory() + "data/";
-    private String validDictionary = testDataDir + "valid-dictionary.txt";
-    private String validNumbersData = testDataDir + "valid-numbers.txt";
-    private String invalidDictionaryWithNumbers = testDataDir + "invalid-dictionary--numbers.txt";
-    private String invalidDictionaryWithMultipleWordsPerLine = testDataDir + "invalid-dictionary--multiple-words-per-line.txt";;
-    private String invalidNumbersDataWithWords = testDataDir + "invalid-numbers--words.txt";
+        validDictionary = TestUtils.createTempFileWithProvidedLines("dictionary", "apple").getPath();
+        validNumbersData = TestUtils.createTempFileWithProvidedLines("numbers", "123").getPath();
+        invalidDictionaryWithNumbers = TestUtils.createTempFileWithProvidedLines("dictionary", "123").getPath();
+        invalidDictionaryWithMultipleWordsPerLine = TestUtils.createTempFileWithProvidedLines("dictionary", "cat in the hat").getPath();
+        invalidNumbersDataWithWords = TestUtils.createTempFileWithProvidedLines("numbers", "oops").getPath();
+    }
 
     @Test
     public void createsFileInputStreamForExistingFile()
