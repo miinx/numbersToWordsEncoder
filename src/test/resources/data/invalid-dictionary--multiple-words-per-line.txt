@@ -1,5 +1,0 @@
-start
-this line has multiple words
-middle
-so does this
-end
