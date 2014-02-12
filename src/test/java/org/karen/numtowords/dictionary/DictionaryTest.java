@@ -26,7 +26,7 @@ public class DictionaryTest {
     public void validatesExistingDictionaryHasOneWordPerLine()
             throws IOException, FileNotValidException {
 
-        dictionary = new Dictionary(validDictionary);
+        dictionary = Dictionary.load(validDictionary);
 
         assertNotNull(dictionary);
         assertThat(dictionary.getDictionaryFileName(), is(validDictionary));
@@ -37,21 +37,23 @@ public class DictionaryTest {
     public void throwsExceptionForNonExistentDictionaryFile()
             throws IOException, FileNotValidException {
 
-        dictionary = new Dictionary("does-not-exist.txt");
+        dictionary = Dictionary.load("does-not-exist.txt");
     }
 
     @Test(expected = FileNotValidException.class)
     public void throwsDictionaryNotValidExceptionForDictionaryWithNumbers()
         throws IOException, FileNotValidException {
 
-        dictionary = new Dictionary(invalidDictionaryWithNumbers);
+        dictionary = Dictionary.load(invalidDictionaryWithNumbers);
     }
 
     @Test(expected = FileNotValidException.class)
     public void throwsDictionaryNotValidExceptionForDictionaryWithMultipleWordsPerLine()
-            throws Throwable {
+            throws IOException, FileNotValidException {
 
-        dictionary = new Dictionary(invalidDictionaryWithMultipleWordsPerLine);
+        dictionary = Dictionary.load(invalidDictionaryWithMultipleWordsPerLine);
     }
+
+    // todo: ensure no more Throwable
 
 }

@@ -80,7 +80,8 @@ public class FileUtils {
         }
     }
 
-    protected String buildFileNotValidExceptionMessage(String fileName, List<String> invalidLines)
+    // TODO Make protected -> package private
+    String buildFileNotValidExceptionMessage(String fileName, List<String> invalidLines)
             throws FileNotValidException {
 
         String error = fileName + FILE_CONTAINS_INVALID_LINES_MESSAGE;

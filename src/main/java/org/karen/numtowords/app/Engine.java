@@ -16,6 +16,8 @@ import java.util.List;
 
 public class Engine {
 
+    // todo: check all getters & setters are needed
+
     public static final String WELCOME_MESSAGE = "Welcome to the Number to Words Generator.";
 
     private Input input;
@@ -82,11 +84,12 @@ public class Engine {
         setDictionary(userDictionaryPath);
     }
 
+    // todo create static method around constructors
     private void setDictionary(String dictionaryPath)
             throws IOException, FileNotValidException {
 
         try {
-            dictionary = new Dictionary(dictionaryPath);
+            dictionary = Dictionary.load(dictionaryPath);
         } catch (DictionaryNotFoundException e) {
             output.write(e.getMessage());
         }

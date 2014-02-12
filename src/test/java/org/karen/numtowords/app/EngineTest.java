@@ -7,7 +7,6 @@ import org.karen.numtowords.dictionary.Dictionary;
 import org.karen.numtowords.exception.FileNotValidException;
 import org.karen.numtowords.io.input.FileInput;
 import org.karen.numtowords.io.input.Input;
-import org.karen.numtowords.io.output.Output;
 import org.karen.numtowords.io.testdoubles.TestOutput;
 import org.karen.numtowords.util.TestUtils;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -17,6 +16,7 @@ import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertNotNull;
 
 @RunWith(MockitoJUnitRunner.class)
 public class EngineTest {
@@ -146,7 +146,7 @@ public class EngineTest {
 
         engine.configure(commandLineArguments);
 
-        assertThat(engine.getOutput().getType(), is(Output.Type.CONSOLE));
+        assertNotNull(engine.getOutput());
     }
 
 

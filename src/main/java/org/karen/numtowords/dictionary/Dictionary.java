@@ -19,14 +19,10 @@ public class Dictionary implements Input {
     private FileInputStream fileInputStream;
     private String dictionaryFileName;
 
-    public Dictionary(String dictionaryFileName)
+    public static Dictionary load(String userDictionary)
             throws IOException, FileNotValidException {
 
-        this.dictionaryFileName = dictionaryFileName;
-        this.fileInputStream = loadDictionary(dictionaryFileName);
-        this.reader = new Scanner(fileInputStream);
-
-        validateDictionaryFile(dictionaryFileName);
+        return new Dictionary(userDictionary);
     }
 
     public String getDictionaryFileName() {
@@ -51,6 +47,24 @@ public class Dictionary implements Input {
     private void validateDictionaryFile(String dictionaryFileName)
             throws IOException, FileNotValidException {
         fileUtils.validate(dictionaryFileName, fileInputStream, Type.DICTIONARY);
+    }
+
+    public String getAsDelimitedString() {
+        String dict = "";
+        while (reader.hasNextLine()) {
+            dict += reader.nextLine() + " ";
+        }
+        return dict.replace("\n", "");
+    }
+
+    private Dictionary(String dictionaryFileName)
+            throws IOException, FileNotValidException {
+
+        this.dictionaryFileName = dictionaryFileName;
+        this.fileInputStream = fileUtils.loadFile(dictionaryFileName, Type.DICTIONARY);
+        this.reader = new Scanner(fileInputStream);
+
+        validateDictionaryFile(dictionaryFileName);
     }
 
 }
