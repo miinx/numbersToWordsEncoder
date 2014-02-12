@@ -59,7 +59,7 @@ public class FileInput implements Input {
     private void loadFile(String fileName)
             throws IOException {
 
-        fileInputStream = fileUtils.loadFile(fileName);
+            fileInputStream = fileUtils.loadFileInputStream(fileName);
         this.reader = new Scanner(fileInputStream);
     }
 

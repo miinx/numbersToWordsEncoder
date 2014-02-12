@@ -4,6 +4,7 @@ import org.karen.numtowords.exception.FileNotValidException;
 import org.karen.numtowords.io.input.Input;
 import org.karen.numtowords.util.FileUtils;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Scanner;
@@ -14,18 +15,21 @@ public class Dictionary implements Input {
     public static final String VALID_DICTIONARY_LINE_REGEX = "^[^\\d ]*$";
 
     private Scanner reader;
-    private FileUtils fileUtils = new FileUtils();
-    private FileInputStream fileInputStream;
-    private String dictionaryFileName;
+    private File dictionaryFile;
+    private FileInputStream dictionaryInputStream;
 
-    public static Dictionary load(String userDictionary)
+    private FileUtils fileUtils = new FileUtils();
+
+    public static Dictionary load(String fileName)
             throws IOException, FileNotValidException {
 
-        return new Dictionary(userDictionary);
+        return new Dictionary(fileName);
     }
 
-    public String getDictionaryFileName() {
-        return dictionaryFileName;
+    public static Dictionary loadFile(File file)
+            throws IOException, FileNotValidException {
+
+        return new Dictionary(file);
     }
 
     @Override
@@ -38,20 +42,34 @@ public class Dictionary implements Input {
         return Type.DICTIONARY;
     }
 
+    public File getDictionaryFile() {
+        return dictionaryFile;
+    }
+
     private Dictionary(String dictionaryFileName)
             throws IOException, FileNotValidException {
 
-        this.dictionaryFileName = dictionaryFileName;           // todo: is this really needed?
-        this.fileInputStream = fileUtils.loadFile(dictionaryFileName);
-        this.reader = new Scanner(fileInputStream);
+        this.dictionaryFile = fileUtils.loadFile(dictionaryFileName);
+        this.dictionaryInputStream = new FileInputStream(dictionaryFile);
+        this.reader = new Scanner(dictionaryFile);
 
         validate(dictionaryFileName);
+    }
+
+    private Dictionary(File dictionaryFile)
+            throws IOException, FileNotValidException {
+
+        this.dictionaryFile = dictionaryFile;
+        this.dictionaryInputStream = new FileInputStream(dictionaryFile);
+        this.reader = new Scanner(dictionaryFile);
+
+        validate(dictionaryFile.getName());
     }
 
     private void validate(String dictionaryFileName)
             throws IOException, FileNotValidException {
 
-        fileUtils.validate(dictionaryFileName, fileInputStream, Type.DICTIONARY);
+        fileUtils.validate(dictionaryFileName, dictionaryInputStream, Type.DICTIONARY);
     }
 
 }

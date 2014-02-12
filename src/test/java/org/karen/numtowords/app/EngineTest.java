@@ -62,7 +62,7 @@ public class EngineTest {
 
         engine.configure(commandLineArguments);
 
-        assertThat(engine.getDictionary().getDictionaryFileName(), is(Dictionary.MACOSX_SYSTEM_DICTIONARY_PATH));
+        assertThat(engine.getDictionary().getDictionaryFile().getPath(), is(Dictionary.MACOSX_SYSTEM_DICTIONARY_PATH));
     }
 
     @Test
@@ -73,7 +73,7 @@ public class EngineTest {
 
         engine.configure(commandLineArguments);
 
-        assertThat(engine.getDictionary().getDictionaryFileName(), is(dictionaryFile));
+        assertThat(engine.getDictionary().getDictionaryFile().getPath(), is(dictionaryFile));
     }
 
     @Test
@@ -118,7 +118,7 @@ public class EngineTest {
         assertThat(fileNames.size(), is(1));
         assertThat(fileNames.get(0), is(inputFile1));
 
-        assertThat(engine.getDictionary().getDictionaryFileName(), is(dictionaryFile));
+        assertThat(engine.getDictionary().getDictionaryFile().getPath(), is(dictionaryFile));
     }
 
     @Test
@@ -134,7 +134,7 @@ public class EngineTest {
         assertThat(fileNames.size(), is(1));
         assertThat(fileNames.get(0), is(inputFile1));
 
-        assertThat(engine.getDictionary().getDictionaryFileName(), is(dictionaryFile));
+        assertThat(engine.getDictionary().getDictionaryFile().getPath(), is(dictionaryFile));
     }
 
 

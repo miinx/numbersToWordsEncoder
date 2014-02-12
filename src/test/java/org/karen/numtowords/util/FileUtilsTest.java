@@ -18,6 +18,9 @@ import static org.junit.Assert.assertNotNull;
 public class FileUtilsTest {
 
     private FileUtils fileUtils = new FileUtils();
+
+    // todo: change all these to use TestUtils temp file creation
+
     private TestUtils testUtils = new TestUtils();
 
     private String testDataDir = testUtils.getTestClassesDirectory() + "data/";
@@ -31,7 +34,7 @@ public class FileUtilsTest {
     public void createsFileInputStreamForExistingFile()
             throws IOException {
 
-        FileInputStream fileInputStream = fileUtils.loadFile(validDictionary);
+        FileInputStream fileInputStream = fileUtils.loadFileInputStream(validDictionary);
 
         assertNotNull(fileInputStream);
         assertThat(fileInputStream, isA(FileInputStream.class));
@@ -41,14 +44,14 @@ public class FileUtilsTest {
     public void throwsExceptionWhenFileIsNotFound()
             throws IOException {
 
-        fileUtils.loadFile("does-not-exist.txt");
+        fileUtils.loadFileInputStream("does-not-exist.txt");
     }
 
     @Test
     public void validatesValidDictionaryFile()
             throws IOException, FileNotValidException {
 
-        FileInputStream fileInputStream = fileUtils.loadFile(validDictionary);
+        FileInputStream fileInputStream = fileUtils.loadFileInputStream(validDictionary);
         fileUtils.validate(validDictionary, fileInputStream, Input.Type.DICTIONARY);
 
         // todo: nothing to assert? error thrown if invalid, no error thus test passes!
@@ -58,7 +61,7 @@ public class FileUtilsTest {
     public void validatesValidNumbersDataFile()
             throws IOException, FileNotValidException {
 
-        FileInputStream fileInputStream = fileUtils.loadFile(validNumbersData);
+        FileInputStream fileInputStream = fileUtils.loadFileInputStream(validNumbersData);
         fileUtils.validate(validNumbersData, fileInputStream, Input.Type.FILE);
 
         // todo: as above, nothing can be asserted?
@@ -68,7 +71,7 @@ public class FileUtilsTest {
     public void throwsExceptionForInvalidDictionaryContainingNumbers()
             throws IOException, FileNotValidException {
 
-        FileInputStream fileInputStream = fileUtils.loadFile(invalidDictionaryWithNumbers);
+        FileInputStream fileInputStream = fileUtils.loadFileInputStream(invalidDictionaryWithNumbers);
         fileUtils.validate(invalidDictionaryWithNumbers, fileInputStream, Input.Type.DICTIONARY);
     }
 
@@ -76,7 +79,7 @@ public class FileUtilsTest {
     public void throwsExceptionForInvalidDictionaryContainingMultipleWordsPerLine()
             throws IOException, FileNotValidException {
 
-        FileInputStream fileInputStream = fileUtils.loadFile(invalidDictionaryWithMultipleWordsPerLine);
+        FileInputStream fileInputStream = fileUtils.loadFileInputStream(invalidDictionaryWithMultipleWordsPerLine);
         fileUtils.validate(invalidDictionaryWithMultipleWordsPerLine, fileInputStream, Input.Type.DICTIONARY);
     }
 
@@ -84,7 +87,7 @@ public class FileUtilsTest {
     public void throwsExceptionForInvalidNumbersData()
             throws IOException, FileNotValidException {
 
-        FileInputStream fileInputStream = fileUtils.loadFile(invalidNumbersDataWithWords);
+        FileInputStream fileInputStream = fileUtils.loadFileInputStream(invalidNumbersDataWithWords);
         fileUtils.validate(invalidNumbersDataWithWords, fileInputStream, Input.Type.FILE);
     }
 

@@ -17,7 +17,11 @@ public class FileUtils {
     public FileUtils() {
     }
 
-    public FileInputStream loadFile(String fileName)
+    public File loadFile(String fileName) {
+        return new File(fileName);
+    }
+
+    public FileInputStream loadFileInputStream(String fileName)
             throws FileNotFoundException {
 
         return new FileInputStream(fileName);
