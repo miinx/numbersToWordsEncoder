@@ -98,9 +98,9 @@ public class Engine {
 
     private void setInputType(List<String> arguments) {
         if (arguments.size() == 0) {
-            setInput(new UserInput());
+            setInput(UserInput.load());
         } else {
-            setInput(new FileInput(arguments));
+            setInput(FileInput.loadFiles(arguments));
         }
     }
 

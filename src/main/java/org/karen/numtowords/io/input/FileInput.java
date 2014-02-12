@@ -18,8 +18,8 @@ public class FileInput implements Input {
     private String currentFile;
     private FileInputStream fileInputStream;
 
-    public FileInput(List<String> fileNames) {
-        this.fileNames = fileNames;
+    public static FileInput loadFiles(List<String> fileNames) {
+        return new FileInput(fileNames);
     }
 
     public void setReader(String fileName)
@@ -50,6 +50,10 @@ public class FileInput implements Input {
 
     public void setCurrentFile(String currentFile) {
         this.currentFile = currentFile;
+    }
+
+    private FileInput(List<String> fileNames) {
+        this.fileNames = fileNames;
     }
 
     private void loadFile(String fileName)

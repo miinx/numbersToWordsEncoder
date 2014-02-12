@@ -6,8 +6,8 @@ public class UserInput implements Input {
 
     private Scanner reader;
 
-    public UserInput() {
-        this.reader = new Scanner(System.in);
+    public static UserInput load() {
+        return new UserInput();
     }
 
     @Override
@@ -18,6 +18,10 @@ public class UserInput implements Input {
     @Override
     public Type getType() {
         return Type.USER;
+    }
+
+    private UserInput() {
+        this.reader = new Scanner(System.in);
     }
 
 }

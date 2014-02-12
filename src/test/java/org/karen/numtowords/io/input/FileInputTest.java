@@ -32,7 +32,7 @@ public class FileInputTest {
 
         files.add(testDataDirectory + "valid-numbers.txt");
 
-        input = new FileInput(files);
+        input = FileInput.loadFiles(files);
         input.setReader(input.getFileNames().get(0));
 
         assertNotNull(input.getReader());
@@ -45,7 +45,7 @@ public class FileInputTest {
 
         files.add("does-not-exist.txt");
 
-        input = new FileInput(files);
+        input = FileInput.loadFiles(files);
         input.setReader(input.getFileNames().get(0));
     }
 
@@ -55,7 +55,7 @@ public class FileInputTest {
 
         files.add(testDataDirectory + "invalid-numbers--words.txt");
 
-        input = new FileInput(files);
+        input = FileInput.loadFiles(files);
         input.setReader(input.getFileNames().get(0));
     }
 

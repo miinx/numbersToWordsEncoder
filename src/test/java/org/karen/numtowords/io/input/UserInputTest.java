@@ -12,7 +12,7 @@ public class UserInputTest {
 
     @Before
     public void setup(){
-        input = new UserInput();
+        input = UserInput.load();
     }
 
     @Test
