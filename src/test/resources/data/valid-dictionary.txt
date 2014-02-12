@@ -1,15 +1,6 @@
 cat
 dog
+
 mouse
 antelope
 giraffe
-
-still
-
-
-valid
-
-as
-whitespace
-is
-ignored
