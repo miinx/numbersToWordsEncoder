@@ -18,7 +18,7 @@ public class NumberTest {
     public void createsNumbersToLettersMap()
             throws IOException, FileNotValidException {
 
-        number = new Number("1");
+        number = new Number("2");
 
         Map<Character, String> numbersToLetters = number.getEncodingMap();
 

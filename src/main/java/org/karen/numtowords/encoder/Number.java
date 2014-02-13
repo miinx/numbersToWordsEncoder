@@ -1,6 +1,8 @@
 package org.karen.numtowords.encoder;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class Number {
@@ -9,21 +11,36 @@ public class Number {
 
     private String number;
     private char[] numberAsCharArray;
-    private String regex = "";
-    private Map<Integer, Character> unencodedDigits = new HashMap<Integer, Character>();
+    private int length;
 
     private Map<Character,String> encodingMap;
+    private List<String> regexCharacterClasses = new ArrayList<String>();
+    private Map<Integer, Character> unencodedDigits = new HashMap<Integer, Character>();
+
+    private Map<Integer, String> word1Regexes = new HashMap<Integer, String>();
+    private Map<Integer, String> word2Regexes = new HashMap<Integer, String>();
 
     public Number(String number) {
         this.number = number;
 
         this.encodingMap = createEncodingMap();
         this.numberAsCharArray = convertToCharArray();
-        this.regex = setRegexAndUncodedDigitsForNumber();
+        this.length = numberAsCharArray.length;
+
+        setRegexPartsAndUnencodedDigits();
+        buildRegexesForUpTo2Words();
     }
 
-    public String getRegex() {
-        return regex;
+    public String getWord1RegexForWordLength(int length) {
+        return word1Regexes.containsKey(length) ? word1Regexes.get(length) : "";
+    }
+
+    public String getWord2RegexForWordLength(int length) {
+        return word2Regexes.containsKey(length) ? word2Regexes.get(length) : "";
+    }
+
+    public int getLength() {
+        return length;
     }
 
     public Map<Integer, Character> getUnencodedDigits() {
@@ -54,17 +71,51 @@ public class Number {
         return cleanedNumber.toCharArray();
     }
 
-    private String setRegexAndUncodedDigitsForNumber() {
-
+    private void setRegexPartsAndUnencodedDigits() {
         for (int i = 0; i < numberAsCharArray.length; i++) {
+            String charEncoding = encodingMap.get(numberAsCharArray[i]);
 
-            if (encodingMap.get(numberAsCharArray[i]).equals("")) {
+            if (charEncoding.equals("")) {
                 unencodedDigits.put(i, numberAsCharArray[i]);
-
             } else {
-                regex += encodingMap.get(numberAsCharArray[i]);
+                regexCharacterClasses.add(charEncoding);
             }
         }
-        return CASE_INSENSITIVE_SEARCH_FLAG + regex;
     }
+
+    private void buildRegexesForUpTo2Words() {
+
+        StringBuilder word1Builder;
+        StringBuilder word2Builder;
+        int word1Length;
+        int maxWordLength = regexCharacterClasses.size();
+
+        for (int word2Length = 0; word2Length < maxWordLength; word2Length++) {
+
+            word1Builder = new StringBuilder(CASE_INSENSITIVE_SEARCH_FLAG);
+            word2Builder = new StringBuilder(CASE_INSENSITIVE_SEARCH_FLAG);
+
+            word1Length = maxWordLength - word2Length;
+
+            buildWord1Regex(word1Builder, word1Length);
+            buildWord2Regex(word2Builder, word2Length);
+
+            word1Regexes.put(word1Length, word1Builder.toString());
+            word2Regexes.put(word2Length, word2Builder.toString());
+        }
+
+    }
+
+    private void buildWord1Regex(StringBuilder word1Builder, int size) {
+        for (int i = 0; i < size; i++) {
+            word1Builder.append(regexCharacterClasses.get(i));
+        }
+    }
+
+    private void buildWord2Regex(StringBuilder word2Builder, int word2Length) {
+        for (int i = regexCharacterClasses.size() - word2Length; i < regexCharacterClasses.size(); i++) {
+            word2Builder.append(regexCharacterClasses.get(i));
+        }
+    }
+
 }
