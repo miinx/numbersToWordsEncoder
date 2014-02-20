@@ -35,6 +35,4 @@ public class NumberTest {
         assertThat(numbersToLetters.get('0'), is(""));
     }
 
-
-
 }

@@ -43,9 +43,10 @@ public class RegexEncoder implements Encoder {
     }
 
     private void getMatchesForWordLength(int wordLength, Number number, String word,
-                                         Map<Integer, List<String>> matchesByWordLength, int word1Or2) {
-        String regex = word1Or2 == 1 ?
-                number.getWord1RegexForWordLength(wordLength) : number.getWord2RegexForWordLength(wordLength);
+                                         Map<Integer, List<String>> matchesByWordLength, int word1or2) {
+
+        String regex = number.getRegexForRequestedWordAndWordLength(word1or2, wordLength);
+
         if (word.matches(regex)) {
             getOrSetMatchesForWordLength(matchesByWordLength, wordLength, word);
         }

@@ -31,12 +31,12 @@ public class Number {
         buildRegexesForUpTo2Words();
     }
 
-    public String getWord1RegexForWordLength(int length) {
-        return word1Regexes.containsKey(length) ? word1Regexes.get(length) : "";
-    }
-
-    public String getWord2RegexForWordLength(int length) {
-        return word2Regexes.containsKey(length) ? word2Regexes.get(length) : "";
+    public String getRegexForRequestedWordAndWordLength(int whichWord, int wordLength) {
+        if (whichWord == 1) {
+            return getRegexForWord1WithLength(wordLength);
+        } else {
+            return getRegexForWord2WithLength(wordLength);
+        }
     }
 
     public int getLength() {
@@ -81,6 +81,14 @@ public class Number {
                 regexCharacterClasses.add(charEncoding);
             }
         }
+    }
+
+    private String getRegexForWord1WithLength(int length) {
+        return word1Regexes.containsKey(length) ? word1Regexes.get(length) : "";
+    }
+
+    private String getRegexForWord2WithLength(int length) {
+        return word2Regexes.containsKey(length) ? word2Regexes.get(length) : "";
     }
 
     private void buildRegexesForUpTo2Words() {
