@@ -21,11 +21,16 @@ public class RegexEncoder implements Encoder {
     @Override
     public List<String> encode(String numberToEncode) {
 
+        // currently this can only be null or a value
+        if (numberToEncode.equals("") || numberToEncode.equals(null)) {
+            return allMatches;
+        }
+
         Scanner dictionaryReader = dictionary.getReader();
         number = new Number(numberToEncode);
 
-        Map<Integer, List<String>> matchesByWordLengthForWord1 = new HashMap<Integer, List<String>>();
-        Map<Integer, List<String>> matchesByWordLengthForWord2 = new HashMap<Integer, List<String>>();
+        Map<Integer, List<String>> matchesForFirstWordByLength = new HashMap<Integer, List<String>>();
+        Map<Integer, List<String>> matchesForSecondWordByLength = new HashMap<Integer, List<String>>();
 
         String word;
         int wordLength;
@@ -36,12 +41,12 @@ public class RegexEncoder implements Encoder {
             wordLength = word.length();
 
             if (wordLength <= number.getLength()) {
-                getMatchesForWordLength(wordLength, word, matchesByWordLengthForWord1, 1);
-                getMatchesForWordLength(wordLength, word, matchesByWordLengthForWord2, 2);
+                getMatchesForWordLength(wordLength, word, matchesForFirstWordByLength, 1);
+                getMatchesForWordLength(wordLength, word, matchesForSecondWordByLength, 2);
             }
         }
 
-        buildListOfAllMatches(matchesByWordLengthForWord1, matchesByWordLengthForWord2);
+        buildListOfAllMatches(matchesForFirstWordByLength, matchesForSecondWordByLength);
 
         return allMatches;
     }
@@ -49,7 +54,7 @@ public class RegexEncoder implements Encoder {
     private void getMatchesForWordLength(int wordLength, String word,
                                          Map<Integer, List<String>> matchesByWordLength, int whichWord) {
 
-        String regex = number.getRegexForRequestedWordWithWordLength(whichWord, wordLength);
+        String regex = number.getRegexForWordWithLength(whichWord, wordLength);
 
         if (word.matches(regex)) {
             addWordToListOfMatchesByWordLength(matchesByWordLength, wordLength, word);
@@ -63,39 +68,34 @@ public class RegexEncoder implements Encoder {
         matchesGroup.get(wordLength).add(word);
     }
 
-    private void buildListOfAllMatches(Map<Integer, List<String>> matchesForWord1, Map<Integer, List<String>> matchesForWord2) {
-        boolean matchesExistForWord1WithLength;
-        boolean matchesExistForWord2WithLength;
+    private void buildListOfAllMatches(Map<Integer, List<String>> matchesForFirstWord, Map<Integer, List<String>> matchesForSecondWord) {
         int maxWordLength = number.getLength();
 
         for (int wordLength=1; wordLength<=maxWordLength; wordLength++) {
-            matchesExistForWord1WithLength = matchesForWord1.containsKey(wordLength);
-            matchesExistForWord2WithLength = matchesForWord2.containsKey(maxWordLength - wordLength);
-
-            // todo: if matchesExistForWord2 only, is this logic still ok?
-            if (matchesExistForWord1WithLength || matchesExistForWord2WithLength) {
-                buildCombinedMatches(matchesForWord1, matchesForWord2, maxWordLength, wordLength);
+            if (matchesForFirstWord.containsKey(wordLength)) {
+                buildMatchesForCombinedWords(matchesForFirstWord, matchesForSecondWord, maxWordLength, wordLength);
             }
         }
-
         Collections.sort(allMatches);
     }
 
-    private void buildCombinedMatches(Map<Integer, List<String>> matchesForWord1, Map<Integer, List<String>> matchesForWord2,
-                                      int maxWordLength, int wordLength) {
-        List<String> word1Words = getMatchedWordsOfLength(matchesForWord1, wordLength);
-        List<String> word2Words = getMatchedWordsOfLength(matchesForWord2, maxWordLength - wordLength);
+    private void buildMatchesForCombinedWords(Map<Integer, List<String>> matchesForFirstWord,
+                                              Map<Integer, List<String>> matchesForSecondWord,
+                                              int maxWordLength, int wordLength) {
 
-        for (String word1 : word1Words) {
-            for (String word2 : word2Words) {
-                addCombinedMatchesToAllMatches(word1, word2);
+        List<String> firstWords = getMatchedWordsOfLength(matchesForFirstWord, wordLength);
+        List<String> secondWords = getMatchedWordsOfLength(matchesForSecondWord, maxWordLength - wordLength);
+
+        for (String firstWord : firstWords) {
+            for (String secondWord : secondWords) {
+                addCombinedMatchesToAllMatches(firstWord, secondWord);
             }
         }
     }
 
-    private void addCombinedMatchesToAllMatches(String word1, String word2) {
-        String wordSeparator = word2.length() > 0 ? "-" : "";
-        String postProcessedWord = reinsertUnencodedDigits(word1 + wordSeparator + word2);
+    private void addCombinedMatchesToAllMatches(String firstWord, String secondWord) {
+        String wordSeparator = secondWord.length() > 0 ? "-" : "";
+        String postProcessedWord = reinsertUnencodedDigits(firstWord + wordSeparator + secondWord);
 
         allMatches.add(postProcessedWord);
     }

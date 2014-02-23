@@ -17,8 +17,8 @@ public class Number {
     private List<String> regexForEncodableDigits = new ArrayList<String>();
     private Map<Integer, Character> unencodedDigits = new HashMap<Integer, Character>();
 
-    private Map<Integer, String> word1Regexes = new HashMap<Integer, String>();
-    private Map<Integer, String> word2Regexes = new HashMap<Integer, String>();
+    private Map<Integer, String> firstWordRegexes = new HashMap<Integer, String>();
+    private Map<Integer, String> secondWordRegexes = new HashMap<Integer, String>();
 
     public Number(String number) {
         this.number = number;
@@ -31,11 +31,11 @@ public class Number {
         buildRegexesToEncodeUpTo2WordsFromNumber();
     }
 
-    public String getRegexForRequestedWordWithWordLength(int whichWord, int wordLength) {
+    public String getRegexForWordWithLength(int whichWord, int wordLength) {
         if (whichWord == 1) {
-            return getRegexForWord1WithLength(wordLength);
+            return getRegexForFirstWordWithLength(wordLength);
         } else {
-            return getRegexForWord2WithLength(wordLength);
+            return getRegexForSecondWordWithLength(wordLength);
         }
     }
 
@@ -83,21 +83,21 @@ public class Number {
         }
     }
 
-    private String getRegexForWord1WithLength(int length) {
-        return word1Regexes.containsKey(length) ? word1Regexes.get(length) : "";
+    private String getRegexForFirstWordWithLength(int length) {
+        return firstWordRegexes.containsKey(length) ? firstWordRegexes.get(length) : "";
     }
 
-    private String getRegexForWord2WithLength(int length) {
-        return word2Regexes.containsKey(length) ? word2Regexes.get(length) : "";
+    private String getRegexForSecondWordWithLength(int length) {
+        return secondWordRegexes.containsKey(length) ? secondWordRegexes.get(length) : "";
     }
 
     private void buildRegexesToEncodeUpTo2WordsFromNumber() {
         int maxWordLength = regexForEncodableDigits.size();
 
-        for (int word2Length = 0; word2Length < maxWordLength; word2Length++) {
-            int word1Length = maxWordLength - word2Length;
-            addRegexForSpecifiedWordToRegexesForThatWord(1, word1Length);
-            addRegexForSpecifiedWordToRegexesForThatWord(2, word2Length);
+        for (int secondWordLength = 0; secondWordLength < maxWordLength; secondWordLength++) {
+            int firstWordLength = maxWordLength - secondWordLength;
+            addRegexForSpecifiedWordToRegexesForThatWord(1, firstWordLength);
+            addRegexForSpecifiedWordToRegexesForThatWord(2, secondWordLength);
         }
     }
 
@@ -105,10 +105,10 @@ public class Number {
         StringBuilder wordBuilder = new StringBuilder(CASE_INSENSITIVE_SEARCH_FLAG);
         if (whichWord == 1) {
             buildRegexForFirstWord(wordBuilder, wordLength);
-            word1Regexes.put(wordLength, wordBuilder.toString());
+            firstWordRegexes.put(wordLength, wordBuilder.toString());
         } else {
             buildRegexForSecondWord(wordBuilder, wordLength);
-            word2Regexes.put(wordLength, wordBuilder.toString());
+            secondWordRegexes.put(wordLength, wordBuilder.toString());
         }
     }
 

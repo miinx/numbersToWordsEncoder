@@ -111,6 +111,17 @@ public class RegexEncoderTest {
 
     }
 
+    @Test
+    public void doesNotReturnMatchesForSecondWordInMultipleWordMatchIfFirstWordHasNone()
+            throws IOException, FileNotValidException {
+
+        encoder = createRegexEncoderWithDictionaryContainingLines("me");
+
+        List<String> matches = encoder.encode("225563");
+
+        assertThat(matches.size(), is(0));
+    }
+
     private RegexEncoder createRegexEncoderWithDictionaryContainingLines(String... lines)
             throws IOException, FileNotValidException {
 
