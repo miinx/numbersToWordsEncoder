@@ -14,7 +14,7 @@ public class Number {
     private int length;
 
     private Map<Character,String> encodingMap;
-    private List<String> regexCharacterClasses = new ArrayList<String>();
+    private List<String> regexForEncodableDigits = new ArrayList<String>();
     private Map<Integer, Character> unencodedDigits = new HashMap<Integer, Character>();
 
     private Map<Integer, String> word1Regexes = new HashMap<Integer, String>();
@@ -28,10 +28,10 @@ public class Number {
         this.length = numberAsCharArray.length;
 
         setRegexPartsAndUnencodedDigits();
-        buildRegexesForUpTo2Words();
+        buildRegexesToEncodeUpTo2WordsFromNumber();
     }
 
-    public String getRegexForRequestedWordAndWordLength(int whichWord, int wordLength) {
+    public String getRegexForRequestedWordWithWordLength(int whichWord, int wordLength) {
         if (whichWord == 1) {
             return getRegexForWord1WithLength(wordLength);
         } else {
@@ -73,12 +73,12 @@ public class Number {
 
     private void setRegexPartsAndUnencodedDigits() {
         for (int i = 0; i < numberAsCharArray.length; i++) {
-            String charEncoding = encodingMap.get(numberAsCharArray[i]);
+            String digitEncoding = encodingMap.get(numberAsCharArray[i]);
 
-            if (charEncoding.equals("")) {
+            if (digitEncoding.equals("")) {
                 unencodedDigits.put(i, numberAsCharArray[i]);
             } else {
-                regexCharacterClasses.add(charEncoding);
+                regexForEncodableDigits.add(digitEncoding);
             }
         }
     }
@@ -91,38 +91,36 @@ public class Number {
         return word2Regexes.containsKey(length) ? word2Regexes.get(length) : "";
     }
 
-    private void buildRegexesForUpTo2Words() {
-
-        StringBuilder word1Builder;
-        StringBuilder word2Builder;
-        int word1Length;
-        int maxWordLength = regexCharacterClasses.size();
+    private void buildRegexesToEncodeUpTo2WordsFromNumber() {
+        int maxWordLength = regexForEncodableDigits.size();
 
         for (int word2Length = 0; word2Length < maxWordLength; word2Length++) {
-
-            word1Builder = new StringBuilder(CASE_INSENSITIVE_SEARCH_FLAG);
-            word2Builder = new StringBuilder(CASE_INSENSITIVE_SEARCH_FLAG);
-
-            word1Length = maxWordLength - word2Length;
-
-            buildWord1Regex(word1Builder, word1Length);
-            buildWord2Regex(word2Builder, word2Length);
-
-            word1Regexes.put(word1Length, word1Builder.toString());
-            word2Regexes.put(word2Length, word2Builder.toString());
-        }
-
-    }
-
-    private void buildWord1Regex(StringBuilder word1Builder, int size) {
-        for (int i = 0; i < size; i++) {
-            word1Builder.append(regexCharacterClasses.get(i));
+            int word1Length = maxWordLength - word2Length;
+            addRegexForSpecifiedWordToRegexesForThatWord(1, word1Length);
+            addRegexForSpecifiedWordToRegexesForThatWord(2, word2Length);
         }
     }
 
-    private void buildWord2Regex(StringBuilder word2Builder, int word2Length) {
-        for (int i = regexCharacterClasses.size() - word2Length; i < regexCharacterClasses.size(); i++) {
-            word2Builder.append(regexCharacterClasses.get(i));
+    private void addRegexForSpecifiedWordToRegexesForThatWord(int whichWord, int wordLength) {
+        StringBuilder wordBuilder = new StringBuilder(CASE_INSENSITIVE_SEARCH_FLAG);
+        if (whichWord == 1) {
+            buildRegexForFirstWord(wordBuilder, wordLength);
+            word1Regexes.put(wordLength, wordBuilder.toString());
+        } else {
+            buildRegexForSecondWord(wordBuilder, wordLength);
+            word2Regexes.put(wordLength, wordBuilder.toString());
+        }
+    }
+
+    private void buildRegexForFirstWord(StringBuilder wordBuilder, int length) {
+        for (int i = 0; i < length; i++) {
+            wordBuilder.append(regexForEncodableDigits.get(i));
+        }
+    }
+
+    private void buildRegexForSecondWord(StringBuilder wordBuilder, int length) {
+        for (int i = regexForEncodableDigits.size() - length; i < regexForEncodableDigits.size(); i++) {
+            wordBuilder.append(regexForEncodableDigits.get(i));
         }
     }
 
