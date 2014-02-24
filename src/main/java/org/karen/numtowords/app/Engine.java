@@ -1,6 +1,8 @@
 package org.karen.numtowords.app;
 
 import org.karen.numtowords.dictionary.Dictionary;
+import org.karen.numtowords.encoder.Encoder;
+import org.karen.numtowords.encoder.RegexEncoder;
 import org.karen.numtowords.exception.FileNotValidException;
 import org.karen.numtowords.io.input.FileInput;
 import org.karen.numtowords.io.input.Input;
@@ -11,96 +13,95 @@ import org.karen.numtowords.io.output.Output;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
 public class Engine {
 
-    // todo: check all getters & setters are needed (other classes too)
-
-    public static final String WELCOME_MESSAGE = "Welcome to the Number to Words Generator.";
+    static final String WELCOME_MESSAGE = "Welcome to the Number to Words Generator.";
+    static final String REQUEST_NUMBER_MESSAGE = "Enter a number for processing:";
 
     private Input input;
     private Output output;
     private Dictionary dictionary;
+    private Encoder encoder;
+
+    private List<String> arguments = new ArrayList<String>();
 
     public Engine() {
     }
 
-    public void configure(String[] args)
-            throws IOException, FileNotValidException {
-
-        processArgs(args);
+    public void configure(String[] args) throws IOException, FileNotValidException {
         setOutput(new ConsoleOutput());
-
-        // todo: success messages for files loaded
+        setInputAndDictionary(args);
+        setEncoder(RegexEncoder.load(dictionary));
     }
 
     public void writeWelcomeMessage() {
         output.write(WELCOME_MESSAGE);
     }
 
-    private void processArgs(String[] args)
-            throws IOException, FileNotValidException {
+    public void processNumbers() {
+        if (Input.Type.USER.equals(input.getType())) {
+            output.write(REQUEST_NUMBER_MESSAGE);
+        }
 
+        String number = input.getNextNumber();
+        List<String> wordMatches = encoder.encode(number);
+        output.writeEncodingResults(number, wordMatches);
+    }
+
+    private void setInputAndDictionary(String[] args) throws IOException, FileNotValidException {
         if (args.length == 0) {
-            input = UserInput.load();
+            setInputToUser(UserInput.load());
             dictionary = Dictionary.load(Dictionary.MACOSX_SYSTEM_DICTIONARY_PATH);
-
         } else {
-            parseArgs(args);
+            processArgs(args);
         }
     }
 
-    private void parseArgs(String[] args)
-            throws IOException, FileNotValidException {
-
-        List<String> arguments = new ArrayList<String>();
+    private void processArgs(String[] args) throws IOException, FileNotValidException {
         arguments.addAll(Arrays.asList(args));
-
         List<String> numbersDataFiles = new ArrayList<String>();
 
-        while (arguments.size() > 0) {
+        Iterator<String> iterator = arguments.iterator();
 
-            if (arguments.get(0).equals("-d")) {
-                List<String> dictionaryArgs = arguments.subList(0, 2);
-
-                setDictionary(dictionaryArgs);
-
-                // todo: arguments.removeAll(dictionaryArgs) throws ConcurrentModificationException.. better way?
-                arguments.remove(0);
-                arguments.remove(0);
-
+        while (iterator.hasNext()) {
+            String arg = iterator.next();
+            if ("-d".equals(arg)) {
+                setUserDictionary(iterator.next());
             } else {
-                numbersDataFiles.add(arguments.remove(0));
+                numbersDataFiles.add(arg);
             }
-
         }
 
         if (numbersDataFiles.size() > 0) {
-            setInput(numbersDataFiles);
+            setInputToFile(numbersDataFiles);
         }
     }
 
-    // todo test output messages are correct for caught exceptions
-    private void setDictionary(List<String> dictionaryArgs)
-            throws IOException, FileNotValidException {
-
-        String userDictionary = dictionaryArgs.get(1);
-
+    private void setUserDictionary(String dictionaryFile) throws IOException, FileNotValidException {
         try {
-            dictionary = Dictionary.load(userDictionary);
-
+            dictionary = Dictionary.load(dictionaryFile);
         } catch (Exception e) {
             output.write(e.getMessage());
         }
     }
 
-    private void setInput(List<String> arguments) {
-        input = FileInput.loadFiles(arguments);
+    void setInputToUser(Input input) {
+        this.input = input;
+    }
+
+    void setInputToFile(List<String> files) {
+        input = FileInput.loadFiles(files);
     }
 
     void setOutput(Output output) {
         this.output = output;
+    }
+
+    void setEncoder(Encoder encoder) {
+        this.encoder = encoder;
     }
 
     Input getInput() {
@@ -114,5 +115,4 @@ public class Engine {
     Dictionary getDictionary() {
         return dictionary;
     }
-
 }

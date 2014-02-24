@@ -42,6 +42,11 @@ public class Dictionary implements Input {
         return Type.DICTIONARY;
     }
 
+    @Override
+    public String getNextNumber() {
+        return null;        // todo hmm... change interface? or dictionary? ... review
+    }
+
     public File getDictionaryFile() {
         return dictionaryFile;
     }

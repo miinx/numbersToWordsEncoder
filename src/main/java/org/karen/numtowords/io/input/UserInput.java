@@ -20,6 +20,11 @@ public class UserInput implements Input {
         return Type.USER;
     }
 
+    @Override
+    public String getNextNumber() {
+        return reader.nextLine();
+    }
+
     private UserInput() {
         this.reader = new Scanner(System.in);
     }

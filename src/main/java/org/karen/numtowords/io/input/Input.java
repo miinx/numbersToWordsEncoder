@@ -8,6 +8,8 @@ public interface Input {
 
     Type getType();
 
+    String getNextNumber();
+
     enum Type {
         USER, FILE, DICTIONARY;
     }

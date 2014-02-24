@@ -4,25 +4,46 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.karen.numtowords.dictionary.Dictionary;
+import org.karen.numtowords.encoder.RegexEncoder;
 import org.karen.numtowords.exception.FileNotValidException;
 import org.karen.numtowords.io.input.FileInput;
 import org.karen.numtowords.io.input.Input;
+import org.karen.numtowords.io.input.UserInput;
+import org.karen.numtowords.io.output.ConsoleOutput;
 import org.karen.numtowords.io.testdoubles.TestOutput;
 import org.karen.numtowords.util.TestUtils;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertNotNull;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+//import org.karen.numtowords.io.testdoubles.TestInput;
 
 @RunWith(MockitoJUnitRunner.class)
 public class EngineTest {
 
     private Engine engine;
-    private TestOutput testOutput = new TestOutput();
+
+    @Mock
+    private ConsoleOutput consoleOutput;
+    @Mock
+    private UserInput userInput;
+    @Mock
+    private FileInput fileInput;
+    @Mock
+    private Dictionary dictionary;
+    @Mock
+    private RegexEncoder encoder;
+
     private String[] commandLineArguments;
 
     private String dictionaryFile;
@@ -30,20 +51,23 @@ public class EngineTest {
     private String dataFile2;
 
     @Before
-    public void setup()
-            throws IOException {
+    public void setup() throws IOException {
+        MockitoAnnotations.initMocks(this);
 
         engine = new Engine();
 
-        dictionaryFile =  TestUtils.createTempFileWithProvidedLines("dictionary", "apple`").getPath();
-        dataFile1 =  TestUtils.createTempFileWithProvidedLines("numbers1", "11111").getPath();
-        dataFile2 =  TestUtils.createTempFileWithProvidedLines("numbers2", "22222").getPath();
+        dictionaryFile = TestUtils.createTempFileWithProvidedLines("dictionary", "apple").getPath();
+        dataFile1 = TestUtils.createTempFileWithProvidedLines("numbers1", "11111").getPath();
+        dataFile2 = TestUtils.createTempFileWithProvidedLines("numbers2", "22222").getPath();
     }
 
     @Test
     public void displaysWelcomeMessage() {
+        TestOutput testOutput = new TestOutput();
         engine.setOutput(testOutput);
+
         engine.writeWelcomeMessage();
+
         assertThat(testOutput.getOutput(), is(Engine.WELCOME_MESSAGE));
     }
 
@@ -85,7 +109,7 @@ public class EngineTest {
     public void setsInputToFileInputWhenCommandLineFileArgumentGiven()
             throws IOException, FileNotValidException {
 
-        commandLineArguments = new String[]{ dataFile1 };
+        commandLineArguments = new String[]{dataFile1};
 
         engine.configure(commandLineArguments);
 
@@ -97,7 +121,7 @@ public class EngineTest {
     public void setsInputToFileInputWhenMultipleCommandLineFileArgumentsGiven()
             throws IOException, FileNotValidException {
 
-        commandLineArguments = new String[] {dataFile1, dataFile2};
+        commandLineArguments = new String[]{dataFile1, dataFile2};
 
         engine.configure(commandLineArguments);
 
@@ -149,10 +173,33 @@ public class EngineTest {
 
         commandLineArguments = new String[0];
 
+        // use a new engine for this test, to avoid setting the output to TestOutput in before()
+        engine = new Engine();
         engine.configure(commandLineArguments);
 
         assertNotNull(engine.getOutput());
     }
 
+    @Test
+    public void requestsThenProcessesNumberProvidedByUserFromCommandLine() {
+        engine.setOutput(consoleOutput);
+        engine.setInputToUser(userInput);
+        engine.setEncoder(encoder);
+
+        String number = "2256";
+        List<String> matches = new ArrayList<String>();
+        matches.add("CALL");
+
+        when(userInput.getType()).thenReturn(Input.Type.USER);
+        when(userInput.getNextNumber()).thenReturn(number);
+        when(encoder.encode(number)).thenReturn(matches);
+
+        engine.processNumbers();
+
+        verify(consoleOutput).write(Engine.REQUEST_NUMBER_MESSAGE);
+        verify(userInput).getNextNumber();
+        verify(encoder).encode(number);
+        verify(consoleOutput).writeEncodingResults(number, matches);
+    }
 
 }

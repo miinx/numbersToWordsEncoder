@@ -40,6 +40,11 @@ public class FileInput implements Input {
         return Type.FILE;
     }
 
+    @Override
+    public String getNextNumber() {
+        return null;
+    }
+
     public List<String> getFilePaths() {
         return filePaths;
     }

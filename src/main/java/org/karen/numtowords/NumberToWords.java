@@ -23,7 +23,7 @@ public class NumberToWords {
 
         engine.configure(args);
         engine.writeWelcomeMessage();
-
+        engine.processNumbers();
     }
 
     public Engine getEngine() {
