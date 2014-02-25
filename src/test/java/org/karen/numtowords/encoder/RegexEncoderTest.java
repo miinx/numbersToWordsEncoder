@@ -31,7 +31,7 @@ public class RegexEncoderTest {
     }
 
     @Test
-    public void encodesValidNumber()
+    public void encodesValidNumberWithAllEncodableDigitsUsed()
             throws IOException, FileNotValidException {
 
         encoder = createRegexEncoderWithDictionaryContainingLines("questionably", "notamatch");
@@ -43,7 +43,7 @@ public class RegexEncoderTest {
     }
 
     @Test
-    public void returnsAllMatchesInUppercaseAndSorted()
+    public void returnsResultInUppercaseAndSorted()
             throws IOException, FileNotValidException {
 
         encoder = createRegexEncoderWithDictionaryContainingLines("then", "there", "them", "thence");
@@ -63,7 +63,7 @@ public class RegexEncoderTest {
         dictionary = Dictionary.loadFile(testDictionary);
         encoder = RegexEncoder.load(dictionary);
 
-        List<String> matches = encoder.encode("227- 6");
+        List<String> matches = encoder.encode(" 227- 6 ");
 
         assertThat(matches.size(), is(1));
         assertThat(matches.get(0), is("BARN"));
@@ -73,27 +73,26 @@ public class RegexEncoderTest {
     public void leavesDigits1And0InPlace()
             throws IOException, FileNotValidException {
 
-        encoder = createRegexEncoderWithDictionaryContainingLines("fan", "dam");
+        encoder = createRegexEncoderWithDictionaryContainingLines("fan", "dam", "it");
 
-        List<String> matches = encoder.encode("31206");
+        List<String> matches = encoder.encode("3126408");
 
         assertThat(matches.size(), is(2));
-        assertThat(matches.get(0), is("D1A0M"));
-        assertThat(matches.get(1), is("F1A0N"));
+        assertThat(matches.get(0), is("D1AM-I0T"));
+        assertThat(matches.get(1), is("F1AN-I0T"));
     }
 
     @Test
-    public void onlyMatchesWordsOfEqualOrShorterLength()
+    public void onlyMatchesWordsEqualInLengthToSourceNumber()   // currently!
             throws IOException, FileNotValidException {
 
-        encoder = createRegexEncoderWithDictionaryContainingLines("dam", "dame", "dames", "fame", "famed", "famous");
+        encoder = createRegexEncoderWithDictionaryContainingLines("and", "dam", "dame", "dames", "fame", "famed", "famous");
 
         List<String> matches = encoder.encode("3263");
 
-        assertThat(matches.size(), is(3));
-        assertThat(matches.get(0), is("DAM"));
-        assertThat(matches.get(1), is("DAME"));
-        assertThat(matches.get(2), is("FAME"));
+        assertThat(matches.size(), is(2));
+        assertThat(matches.get(0), is("DAME"));
+        assertThat(matches.get(1), is("FAME"));
     }
 
     @Test
@@ -108,7 +107,6 @@ public class RegexEncoderTest {
         assertThat(matches.get(0), is("BB-KLOD"));
         assertThat(matches.get(1), is("CAL-JOE"));
         assertThat(matches.get(2), is("CALL-ME"));
-
     }
 
     @Test
