@@ -1,4 +1,4 @@
-package org.karen.numtowords.util;
+package org.karen.numtowords.validation;
 
 import org.karen.numtowords.dictionary.Dictionary;
 import org.karen.numtowords.exception.FileNotValidException;
@@ -9,19 +9,15 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FileUtils {
+public class FileValidator {
 
     public static final String FILE_CONTAINS_INVALID_LINES_MESSAGE = " contains the following invalid lines: ";
     private static final String UNEXPECTED_VALIDATION_EXCEPTION = "An unexpected error occurred while validating the file - ";
 
-    public FileUtils() {
+    public FileValidator() {
     }
 
-    public File loadFile(String fileName) {
-        return new File(fileName);
-    }
-
-    public FileInputStream loadFileInputStream(String fileName)
+    public FileInputStream getFileInputStream(String fileName)
             throws FileNotFoundException {
 
         return new FileInputStream(fileName);

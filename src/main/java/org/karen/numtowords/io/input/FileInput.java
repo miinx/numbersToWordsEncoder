@@ -1,7 +1,7 @@
 package org.karen.numtowords.io.input;
 
 import org.karen.numtowords.exception.FileNotValidException;
-import org.karen.numtowords.util.FileUtils;
+import org.karen.numtowords.validation.FileValidator;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -13,7 +13,7 @@ public class FileInput implements Input {
     public static final String VALID_NUMBERS_LINE_REGEX = "^[^a-zA-Z]*$";
 
     private Scanner reader;
-    private FileUtils fileUtils = new FileUtils();
+    private FileValidator fileValidator = new FileValidator();
     private List<String> filePaths;
     private String currentFile;
     private FileInputStream fileInputStream;
@@ -64,14 +64,14 @@ public class FileInput implements Input {
     private void loadFile(String filePath)
             throws IOException {
 
-            fileInputStream = fileUtils.loadFileInputStream(filePath);
+        fileInputStream = fileValidator.getFileInputStream(filePath);
         this.reader = new Scanner(fileInputStream);
     }
 
     private void validateFile(String filePath)
             throws IOException, FileNotValidException {
 
-        fileUtils.validate(filePath, fileInputStream, Type.FILE);
+        fileValidator.validate(filePath, fileInputStream, Type.FILE);
     }
 
 }

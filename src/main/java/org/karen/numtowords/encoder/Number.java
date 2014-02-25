@@ -74,7 +74,7 @@ public class Number {
         for (int i = 0; i < numberAsCharArray.length; i++) {
             String digitEncoding = encodingMap.get(numberAsCharArray[i]);
 
-            if (digitEncoding.equals("")) {
+            if ("".equals(digitEncoding)) {
                 unencodedDigits.put(i, numberAsCharArray[i]);
             } else {
                 regexesForEncodableDigits.add(digitEncoding);

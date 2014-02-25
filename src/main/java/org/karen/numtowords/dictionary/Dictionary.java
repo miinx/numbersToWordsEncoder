@@ -2,7 +2,7 @@ package org.karen.numtowords.dictionary;
 
 import org.karen.numtowords.exception.FileNotValidException;
 import org.karen.numtowords.io.input.Input;
-import org.karen.numtowords.util.FileUtils;
+import org.karen.numtowords.validation.FileValidator;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -18,7 +18,7 @@ public class Dictionary implements Input {
     private File dictionaryFile;
     private FileInputStream dictionaryInputStream;
 
-    private FileUtils fileUtils = new FileUtils();
+    private FileValidator fileValidator = new FileValidator();
 
     public static Dictionary load(String fileName)
             throws IOException, FileNotValidException {
@@ -54,7 +54,7 @@ public class Dictionary implements Input {
     private Dictionary(String dictionaryFileName)
             throws IOException, FileNotValidException {
 
-        this.dictionaryFile = fileUtils.loadFile(dictionaryFileName);
+        this.dictionaryFile = new File(dictionaryFileName);
         this.dictionaryInputStream = new FileInputStream(dictionaryFile);
         this.reader = new Scanner(dictionaryFile);
 
@@ -74,7 +74,7 @@ public class Dictionary implements Input {
     private void validate(String dictionaryFileName)
             throws IOException, FileNotValidException {
 
-        fileUtils.validate(dictionaryFileName, dictionaryInputStream, Type.DICTIONARY);
+        fileValidator.validate(dictionaryFileName, dictionaryInputStream, Type.DICTIONARY);
     }
 
 }

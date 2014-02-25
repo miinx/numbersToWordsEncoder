@@ -1,9 +1,10 @@
-package org.karen.numtowords.util;
+package org.karen.numtowords.validation;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.karen.numtowords.exception.FileNotValidException;
 import org.karen.numtowords.io.input.Input;
+import org.karen.numtowords.util.TestUtils;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -16,9 +17,9 @@ import static org.hamcrest.core.Is.isA;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-public class FileUtilsTest {
+public class FileValidatorTest {
 
-    private FileUtils fileUtils = new FileUtils();
+    private FileValidator fileValidator = new FileValidator();
 
     private String validDictionary;
     private String validNumbersData;
@@ -41,7 +42,7 @@ public class FileUtilsTest {
     public void createsFileInputStreamForExistingFile()
             throws IOException {
 
-        FileInputStream fileInputStream = fileUtils.loadFileInputStream(validDictionary);
+        FileInputStream fileInputStream = fileValidator.getFileInputStream(validDictionary);
 
         assertNotNull(fileInputStream);
         assertThat(fileInputStream, isA(FileInputStream.class));
@@ -51,15 +52,15 @@ public class FileUtilsTest {
     public void throwsExceptionWhenFileIsNotFound()
             throws IOException {
 
-        fileUtils.loadFileInputStream("does-not-exist.txt");
+        fileValidator.getFileInputStream("does-not-exist.txt");
     }
 
     @Test
     public void validatesValidDictionaryFile()
             throws IOException, FileNotValidException {
 
-        FileInputStream fileInputStream = fileUtils.loadFileInputStream(validDictionary);
-        fileUtils.validate(validDictionary, fileInputStream, Input.Type.DICTIONARY);
+        FileInputStream fileInputStream = fileValidator.getFileInputStream(validDictionary);
+        fileValidator.validate(validDictionary, fileInputStream, Input.Type.DICTIONARY);
 
         // todo: nothing to assert? error thrown if invalid, no error thus test passes!
     }
@@ -68,8 +69,8 @@ public class FileUtilsTest {
     public void validatesValidNumbersDataFile()
             throws IOException, FileNotValidException {
 
-        FileInputStream fileInputStream = fileUtils.loadFileInputStream(validNumbersData);
-        fileUtils.validate(validNumbersData, fileInputStream, Input.Type.FILE);
+        FileInputStream fileInputStream = fileValidator.getFileInputStream(validNumbersData);
+        fileValidator.validate(validNumbersData, fileInputStream, Input.Type.FILE);
 
         // todo: as above, nothing can be asserted?
     }
@@ -78,24 +79,24 @@ public class FileUtilsTest {
     public void throwsExceptionForInvalidDictionaryContainingNumbers()
             throws IOException, FileNotValidException {
 
-        FileInputStream fileInputStream = fileUtils.loadFileInputStream(invalidDictionaryWithNumbers);
-        fileUtils.validate(invalidDictionaryWithNumbers, fileInputStream, Input.Type.DICTIONARY);
+        FileInputStream fileInputStream = fileValidator.getFileInputStream(invalidDictionaryWithNumbers);
+        fileValidator.validate(invalidDictionaryWithNumbers, fileInputStream, Input.Type.DICTIONARY);
     }
 
     @Test(expected = FileNotValidException.class)
     public void throwsExceptionForInvalidDictionaryContainingMultipleWordsPerLine()
             throws IOException, FileNotValidException {
 
-        FileInputStream fileInputStream = fileUtils.loadFileInputStream(invalidDictionaryWithMultipleWordsPerLine);
-        fileUtils.validate(invalidDictionaryWithMultipleWordsPerLine, fileInputStream, Input.Type.DICTIONARY);
+        FileInputStream fileInputStream = fileValidator.getFileInputStream(invalidDictionaryWithMultipleWordsPerLine);
+        fileValidator.validate(invalidDictionaryWithMultipleWordsPerLine, fileInputStream, Input.Type.DICTIONARY);
     }
 
     @Test(expected = FileNotValidException.class)
     public void throwsExceptionForInvalidNumbersData()
             throws IOException, FileNotValidException {
 
-        FileInputStream fileInputStream = fileUtils.loadFileInputStream(invalidNumbersDataWithWords);
-        fileUtils.validate(invalidNumbersDataWithWords, fileInputStream, Input.Type.FILE);
+        FileInputStream fileInputStream = fileValidator.getFileInputStream(invalidNumbersDataWithWords);
+        fileValidator.validate(invalidNumbersDataWithWords, fileInputStream, Input.Type.FILE);
     }
 
     @Test
@@ -108,10 +109,10 @@ public class FileUtilsTest {
 
         String fileName = "file.txt";
 
-        FileUtils fileUtils = new FileUtils();
+        FileValidator fileValidator = new FileValidator();
 
-        String expectedMessage = fileName + FileUtils.FILE_CONTAINS_INVALID_LINES_MESSAGE + "\n - 123\n - 456";
-        String actualMessage = fileUtils.buildFileNotValidExceptionMessage(fileName, invalidLines);
+        String expectedMessage = fileName + FileValidator.FILE_CONTAINS_INVALID_LINES_MESSAGE + "\n - 123\n - 456";
+        String actualMessage = fileValidator.buildFileNotValidExceptionMessage(fileName, invalidLines);
 
         assertEquals(expectedMessage, actualMessage);
     }
