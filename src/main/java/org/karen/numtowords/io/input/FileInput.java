@@ -3,6 +3,7 @@ package org.karen.numtowords.io.input;
 import org.karen.numtowords.exception.FileNotValidException;
 import org.karen.numtowords.validation.FileValidator;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.List;
@@ -11,24 +12,22 @@ import java.util.Scanner;
 public class FileInput implements Input {
 
     public static final String VALID_NUMBERS_LINE_REGEX = "^[^a-zA-Z]*$";
-    private static final String NEXT_NUMBER_MESSAGE = "Processing the next number...";
+    private static final String NEXT_NUMBER_MESSAGE = "\nProcessing the next number...";
 
     private Scanner reader;
     private FileValidator fileValidator = new FileValidator();
     private List<String> filePaths;
-    private String currentFile;
+    private int filesLoaded = 0;
     private FileInputStream fileInputStream;
+    private String nextNumber;
 
-    public static FileInput loadFiles(List<String> filePaths) {
+    public static FileInput loadFiles(List<String> filePaths) throws IOException, FileNotValidException {
         return new FileInput(filePaths);
     }
 
-    public void setReader(String filePath)
-            throws IOException, FileNotValidException {
-
-        loadFile(filePath);
-        validateFile(filePath);
-        setCurrentFile(filePath);
+    private FileInput(List<String> filePaths) throws IOException, FileNotValidException {
+        this.filePaths = filePaths;
+        setReader(filePaths.get(0));
     }
 
     @Override
@@ -48,35 +47,43 @@ public class FileInput implements Input {
 
     @Override
     public String getNextNumber() {
-        return null;
+        return nextNumber;
     }
 
     @Override
-    public void setNextNumber() {
+    public void setNextNumber() throws IOException, FileNotValidException {
+        if (reader.hasNextLine()) {
+            nextNumber = reader.nextLine();
 
+        } else if (hasUnprocessedFiles()) {
+            setReader(filePaths.get(filesLoaded));
+            setNextNumber();
+
+        } else {
+            nextNumber = EXIT_VALUE;
+        }
     }
 
     public List<String> getFilePaths() {
         return filePaths;
     }
 
-    public String getCurrentFile() {
-        return currentFile;
+    private void setReader(String filePath)
+            throws IOException, FileNotValidException {
+        loadNextFile(filePath);
+        validateFile(filePath);
+        filesLoaded++;
     }
 
-    public void setCurrentFile(String currentFile) {
-        this.currentFile = currentFile;
+    private boolean hasUnprocessedFiles() {
+        return filePaths.size() > filesLoaded;
     }
 
-    private FileInput(List<String> filePaths) {
-        this.filePaths = filePaths;
-    }
-
-    private void loadFile(String filePath)
+    private void loadNextFile(String filePath)
             throws IOException {
 
         fileInputStream = fileValidator.getFileInputStream(filePath);
-        this.reader = new Scanner(fileInputStream);
+        reader = new Scanner(new File(filePath));
     }
 
     private void validateFile(String filePath)

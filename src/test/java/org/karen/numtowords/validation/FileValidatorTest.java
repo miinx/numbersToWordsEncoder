@@ -111,7 +111,8 @@ public class FileValidatorTest {
 
         FileValidator fileValidator = new FileValidator();
 
-        String expectedMessage = fileName + FileValidator.FILE_CONTAINS_INVALID_LINES_MESSAGE + "\n - 123\n - 456";
+        String expectedMessage = String.format("%s%s%s%s", fileName, FileValidator.FILE_CONTAINS_INVALID_LINES_MESSAGE,
+                "\n - 123\n - 456\n", FileValidator.CHECK_DICTIONARY_PARAMATERS_MESSAGE);
         String actualMessage = fileValidator.buildFileNotValidExceptionMessage(fileName, invalidLines);
 
         assertEquals(expectedMessage, actualMessage);

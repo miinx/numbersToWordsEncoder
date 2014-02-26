@@ -41,10 +41,16 @@ public class Engine {
         output.write(WELCOME_MESSAGE);
     }
 
-    public void processNumbers() throws FileNotFoundException {
+    public void processNumbers() throws IOException, FileNotValidException {
         while (hasNextNumber()) {
             encodeNumberAndOutputResult();
         }
+    }
+
+    boolean hasNextNumber() throws IOException, FileNotValidException {
+        output.write(input.getNextNumberMessage());
+        input.setNextNumber();
+        return !Input.EXIT_VALUE.equalsIgnoreCase(input.getNextNumber());
     }
 
     void encodeNumberAndOutputResult() throws FileNotFoundException {
@@ -53,25 +59,23 @@ public class Engine {
         output.writeEncodingResults(number, wordMatches);
     }
 
-    boolean hasNextNumber() {
-        output.write(input.getNextNumberMessage());
-        input.setNextNumber();
-        return !Input.EXIT_VALUE.equalsIgnoreCase(input.getNextNumber());
-    }
-
     private void setInputAndDictionary(String[] args) throws IOException, FileNotValidException {
         if (args.length == 0) {
-            setInputToUser(UserInput.load());
-            dictionary = Dictionary.load(Dictionary.MACOSX_SYSTEM_DICTIONARY_PATH);
+            setInput(UserInput.load());
+            setSystemDictionary();
         } else {
             processArgs(args);
         }
     }
 
+    private void setSystemDictionary() throws IOException, FileNotValidException {
+        dictionary = Dictionary.load(Dictionary.MACOSX_SYSTEM_DICTIONARY_PATH);
+    }
+
     private void processArgs(String[] args) throws IOException, FileNotValidException {
-        arguments.addAll(Arrays.asList(args));
         List<String> numbersDataFiles = new ArrayList<String>();
 
+        arguments.addAll(Arrays.asList(args));
         Iterator<String> iterator = arguments.iterator();
 
         while (iterator.hasNext()) {
@@ -83,8 +87,10 @@ public class Engine {
             }
         }
 
-        if (numbersDataFiles.size() > 0) {
-            setInputToFiles(numbersDataFiles);
+        setFileInputIfDataFilesProvided(numbersDataFiles);
+
+        if (dictionary == null) {
+            setSystemDictionary();
         }
     }
 
@@ -96,12 +102,15 @@ public class Engine {
         }
     }
 
-    void setInputToUser(Input input) {
-        this.input = input;
+    private void setFileInputIfDataFilesProvided(List<String> numbersDataFiles) throws IOException, FileNotValidException {
+        if (numbersDataFiles.size() > 0) {
+            FileInput fileInput = FileInput.loadFiles(numbersDataFiles);
+            setInput(fileInput);
+        }
     }
 
-    void setInputToFiles(List<String> files) {
-        input = FileInput.loadFiles(files);
+    void setInput(Input input) {
+        this.input = input;
     }
 
     void setOutput(Output output) {

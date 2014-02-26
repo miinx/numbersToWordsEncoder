@@ -12,6 +12,7 @@ import java.util.List;
 public class FileValidator {
 
     public static final String FILE_CONTAINS_INVALID_LINES_MESSAGE = " contains the following invalid lines: ";
+    public static final Object CHECK_DICTIONARY_PARAMATERS_MESSAGE = "Ensure any custom dictionaries are preceded with '-d'.";
     private static final String UNEXPECTED_VALIDATION_EXCEPTION = "An unexpected error occurred while validating the file - ";
 
     public FileValidator() {
@@ -70,6 +71,7 @@ public class FileValidator {
         for (String invalidLine : invalidLines) {
             error += "\n - " + invalidLine;
         }
+        error += "\n" + CHECK_DICTIONARY_PARAMATERS_MESSAGE;
         return error;
     }
 

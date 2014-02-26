@@ -120,6 +120,17 @@ public class EngineTest {
     }
 
     @Test
+    public void setsDictionaryToSystemDictionaryWhenFileArgumentsProvidedDoNotIncludeADictionary()
+            throws IOException, FileNotValidException {
+
+        commandLineArguments = new String[]{dataFile1};
+
+        engine.configure(commandLineArguments);
+
+        assertThat(engine.getDictionary().getDictionaryFile().getPath(), is(Dictionary.MACOSX_SYSTEM_DICTIONARY_PATH));
+    }
+
+    @Test
     public void setsInputToFileInputWhenMultipleCommandLineFileArgumentsGiven()
             throws IOException, FileNotValidException {
 
@@ -183,9 +194,9 @@ public class EngineTest {
     }
 
     @Test
-    public void exitsWhenExitValueIsEnteredOnCommandLine() {
+    public void exitsWhenNextNumberEqualsExitValue() throws IOException, FileNotValidException {
         engine.setOutput(consoleOutput);
-        engine.setInputToUser(userInput);
+        engine.setInput(userInput);
 
         when(userInput.getNextNumber()).thenReturn("quit");
 
@@ -195,9 +206,9 @@ public class EngineTest {
     }
 
     @Test
-    public void setsNextNumberWhenUserEntersAnythingButExitValue() {
+    public void setsNextNumberWhenUserEntersAnythingButExitValue() throws IOException, FileNotValidException {
         engine.setOutput(consoleOutput);
-        engine.setInputToUser(userInput);
+        engine.setInput(userInput);
 
         when(userInput.getNextNumber()).thenReturn("123");
 
@@ -209,7 +220,7 @@ public class EngineTest {
     @Test
     public void writesEncodingResultForProvidedNumber() throws FileNotFoundException {
         engine.setOutput(consoleOutput);
-        engine.setInputToUser(userInput);
+        engine.setInput(userInput);
         engine.setEncoder(encoder);
 
         String number = "234";
@@ -222,6 +233,18 @@ public class EngineTest {
 
         verify(encoder).encode(number);
         verify(consoleOutput).writeEncodingResults(number, results);
+    }
+
+    @Test
+    public void setsNextNumberWhenInputTypeIsFileAndCurrentFileHasMoreNumbers() throws IOException, FileNotValidException {
+        engine.setInput(fileInput);
+        engine.setOutput(consoleOutput);
+
+        when(fileInput.getNextNumber()).thenReturn("123");
+
+        boolean hasNextNumber = engine.hasNextNumber();
+
+        assertThat(hasNextNumber, is(true));
     }
 
 }

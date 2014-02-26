@@ -10,7 +10,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertNotNull;
 
 
@@ -25,38 +26,67 @@ public class FileInputTest {
     }
 
     @Test
-    public void createsReaderForExistingFile()
-            throws IOException, FileNotValidException {
-
+    public void createsReaderForExistingFile() throws IOException, FileNotValidException {
         String validFile = TestUtils.createTempFileWithProvidedLines("numbers", "123").getPath();
         files.add(validFile);
 
         input = FileInput.loadFiles(files);
-        input.setReader(input.getFilePaths().get(0));
 
         assertNotNull(input.getReader());
-        assertEquals(files.get(0), input.getCurrentFile());
     }
 
     @Test(expected = FileNotFoundException.class)
-    public void throwsExceptionForNonexistentNumbersDataFile()
-            throws IOException, FileNotValidException {
-
+    public void throwsExceptionForNonexistentNumbersDataFile() throws IOException, FileNotValidException {
         files.add("does-not-exist.txt");
 
         input = FileInput.loadFiles(files);
-        input.setReader(input.getFilePaths().get(0));
     }
 
     @Test(expected = FileNotValidException.class)
-    public void throwsExceptionForInvalidNumbersDataFileContainingWords()
-            throws IOException, FileNotValidException {
-
+    public void throwsExceptionForInvalidNumbersDataFileContainingWords() throws IOException, FileNotValidException {
         String invalidFile = TestUtils.createTempFileWithProvidedLines("test", "foo").getPath();
         files.add(invalidFile);
 
         input = FileInput.loadFiles(files);
-        input.setReader(input.getFilePaths().get(0));
     }
 
+    @Test
+    public void getsNextNumberInCurrentFile() throws IOException, FileNotValidException {
+        String validFile = TestUtils.createTempFileWithProvidedLines("numbers", "123").getPath();
+        files.add(validFile);
+
+        input = FileInput.loadFiles(files);
+
+        input.setNextNumber();
+
+        assertThat(input.getNextNumber(), is("123"));
+    }
+
+    @Test
+    public void getsNextNumberFromNextFileWhenCurrentFileHasNoMoreLines() throws IOException, FileNotValidException {
+        String file1 = TestUtils.createTempFileWithProvidedLines("numbers1").getPath();
+        String file2 = TestUtils.createTempFileWithProvidedLines("numbers2", "456").getPath();
+        files.add(file1);
+        files.add(file2);
+
+        input = FileInput.loadFiles(files);
+
+        input.setNextNumber();
+
+        assertThat(input.getNextNumber(), is("456"));
+    }
+
+    @Test
+    public void setsNextNumberToExitValueWhenNoMoreFilesWithNumbers() throws IOException, FileNotValidException {
+        String file1 = TestUtils.createTempFileWithProvidedLines("numbers1").getPath();
+        String file2 = TestUtils.createTempFileWithProvidedLines("numbers2").getPath();
+        files.add(file1);
+        files.add(file2);
+
+        input = FileInput.loadFiles(files);
+
+        input.setNextNumber();
+
+        assertThat(input.getNextNumber(), is(Input.EXIT_VALUE));
+    }
 }
