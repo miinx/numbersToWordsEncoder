@@ -11,9 +11,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.isA;
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 public class FileValidatorTest {
@@ -107,7 +107,7 @@ public class FileValidatorTest {
 
         String actualMessage = fileValidator.buildFileNotValidExceptionMessage(fileName, invalidLines);
 
-        assertEquals(expectedMessage, actualMessage);
+        assertThat(actualMessage, is(expectedMessage));
     }
 
 }

@@ -13,7 +13,7 @@ public class Number {
     private char[] numberAsCharArray;
     private int maxWordLength;
 
-    private Map<Character,String> encodingMap;
+    private Map<Character, String> encodingMap;
     private Map<Integer, Character> unencodedDigits = new HashMap<Integer, Character>();
 
     private List<String> regexesForEncodableDigits = new ArrayList<String>();

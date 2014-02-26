@@ -4,7 +4,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.karen.numtowords.validation.DataType;
 
-import static org.junit.Assert.assertEquals;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertNotNull;
 
 public class UserInputTest {
@@ -12,13 +13,13 @@ public class UserInputTest {
     private UserInput input;
 
     @Before
-    public void setup(){
+    public void setup() {
         input = UserInput.load();
     }
 
     @Test
     public void identifiesAsUserDataType() {
-        assertEquals(DataType.USER, input.getType());
+        assertThat(input.getType(), is(DataType.USER));
     }
 
     @Test
