@@ -10,6 +10,7 @@ import org.karen.numtowords.io.input.UserInput;
 import org.karen.numtowords.io.output.ConsoleOutput;
 import org.karen.numtowords.io.output.Output;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -19,7 +20,6 @@ import java.util.List;
 public class Engine {
 
     static final String WELCOME_MESSAGE = "Welcome to the Number to Words Generator.";
-    static final String REQUEST_NUMBER_MESSAGE = "Enter a number for processing:";
 
     private Input input;
     private Output output;
@@ -41,14 +41,22 @@ public class Engine {
         output.write(WELCOME_MESSAGE);
     }
 
-    public void processNumbers() {
-        if (Input.Type.USER.equals(input.getType())) {
-            output.write(REQUEST_NUMBER_MESSAGE);
+    public void processNumbers() throws FileNotFoundException {
+        while (hasNextNumber()) {
+            encodeNumberAndOutputResult();
         }
+    }
 
+    void encodeNumberAndOutputResult() throws FileNotFoundException {
         String number = input.getNextNumber();
         List<String> wordMatches = encoder.encode(number);
         output.writeEncodingResults(number, wordMatches);
+    }
+
+    boolean hasNextNumber() {
+        output.write(input.getNextNumberMessage());
+        input.setNextNumber();
+        return !Input.EXIT_VALUE.equalsIgnoreCase(input.getNextNumber());
     }
 
     private void setInputAndDictionary(String[] args) throws IOException, FileNotValidException {
@@ -76,7 +84,7 @@ public class Engine {
         }
 
         if (numbersDataFiles.size() > 0) {
-            setInputToFile(numbersDataFiles);
+            setInputToFiles(numbersDataFiles);
         }
     }
 
@@ -92,7 +100,7 @@ public class Engine {
         this.input = input;
     }
 
-    void setInputToFile(List<String> files) {
+    void setInputToFiles(List<String> files) {
         input = FileInput.loadFiles(files);
     }
 

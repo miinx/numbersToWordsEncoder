@@ -6,6 +6,7 @@ import org.karen.numtowords.validation.FileValidator;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Scanner;
 
@@ -14,7 +15,6 @@ public class Dictionary implements Input {
     public static final String MACOSX_SYSTEM_DICTIONARY_PATH = "/usr/share/dict/words";
     public static final String VALID_DICTIONARY_LINE_REGEX = "^[^\\d ]*$";
 
-    private Scanner reader;
     private File dictionaryFile;
     private FileInputStream dictionaryInputStream;
 
@@ -33,18 +33,13 @@ public class Dictionary implements Input {
     }
 
     @Override
-    public Scanner getReader() {
-        return reader;
+    public Scanner getReader() throws FileNotFoundException {
+        return new Scanner(dictionaryFile);
     }
 
     @Override
     public Type getType() {
-        return Type.DICTIONARY;
-    }
-
-    @Override
-    public String getNextNumber() {
-        return null;        // todo hmm... change interface? or dictionary? ... review
+        return Type.DICTIONARY;     // todo FileType??
     }
 
     public File getDictionaryFile() {
@@ -56,7 +51,6 @@ public class Dictionary implements Input {
 
         this.dictionaryFile = new File(dictionaryFileName);
         this.dictionaryInputStream = new FileInputStream(dictionaryFile);
-        this.reader = new Scanner(dictionaryFile);
 
         validate(dictionaryFileName);
     }
@@ -66,7 +60,6 @@ public class Dictionary implements Input {
 
         this.dictionaryFile = dictionaryFile;
         this.dictionaryInputStream = new FileInputStream(dictionaryFile);
-        this.reader = new Scanner(dictionaryFile);
 
         validate(dictionaryFile.getName());
     }
@@ -76,5 +69,25 @@ public class Dictionary implements Input {
 
         fileValidator.validate(dictionaryFileName, dictionaryInputStream, Type.DICTIONARY);
     }
+
+
+    // --------- ALL AFTER THIS SHOULD GO ---------
+    // todo new interface for dictionary, remove all the stuff from here that doesn't use it
+
+    @Override
+    public String getNextNumberMessage() {
+        return null;
+    }
+
+    @Override
+    public String getNextNumber() {
+        return null;
+    }
+
+    @Override
+    public void setNextNumber() {
+
+    }
+
 
 }

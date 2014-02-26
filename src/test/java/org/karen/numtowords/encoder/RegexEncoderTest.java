@@ -43,6 +43,17 @@ public class RegexEncoderTest {
     }
 
     @Test
+    public void returnsZeroResultsForInvalidNumber()
+            throws IOException, FileNotValidException {
+
+        encoder = createRegexEncoderWithDictionaryContainingLines("cat");
+
+        List<String> matches = encoder.encode("cat");
+
+        assertThat(matches.size(), is(0));
+    }
+
+    @Test
     public void returnsResultInUppercaseAndSorted()
             throws IOException, FileNotValidException {
 

@@ -26,8 +26,4 @@ public class NumberToWords {
         engine.processNumbers();
     }
 
-    public Engine getEngine() {
-        return engine;
-    }
-
 }

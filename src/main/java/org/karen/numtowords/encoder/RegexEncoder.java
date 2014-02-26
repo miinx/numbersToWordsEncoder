@@ -2,13 +2,14 @@ package org.karen.numtowords.encoder;
 
 import org.karen.numtowords.dictionary.Dictionary;
 
+import java.io.FileNotFoundException;
 import java.util.*;
 
 public class RegexEncoder implements Encoder {
 
     private Dictionary dictionary;
     private Number number;
-    private List<String> result = new ArrayList<String>();
+    private List<String> result;
 
     public static RegexEncoder load(Dictionary dictionary) {
         return new RegexEncoder(dictionary);
@@ -19,9 +20,10 @@ public class RegexEncoder implements Encoder {
     }
 
     @Override
-    public List<String> encode(String numberToEncode) {
+    public List<String> encode(String numberToEncode) throws FileNotFoundException {
 
         number = new Number(numberToEncode);
+        result = new ArrayList<String>();
 
         Map<Integer, List<String>> matchesForFirstWordByLength = new HashMap<Integer, List<String>>();
         Map<Integer, List<String>> matchesForSecondWordByLength = new HashMap<Integer, List<String>>();
@@ -33,7 +35,7 @@ public class RegexEncoder implements Encoder {
         return result;
     }
 
-    private void getMatches(Map<Integer, List<String>> matchesForFirstWordByLength, Map<Integer, List<String>> matchesForSecondWordByLength) {
+    private void getMatches(Map<Integer, List<String>> matchesForFirstWordByLength, Map<Integer, List<String>> matchesForSecondWordByLength) throws FileNotFoundException {
 
         Scanner dictionaryReader = dictionary.getReader();
         String word;

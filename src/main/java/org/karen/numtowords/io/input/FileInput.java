@@ -11,6 +11,7 @@ import java.util.Scanner;
 public class FileInput implements Input {
 
     public static final String VALID_NUMBERS_LINE_REGEX = "^[^a-zA-Z]*$";
+    private static final String NEXT_NUMBER_MESSAGE = "Processing the next number...";
 
     private Scanner reader;
     private FileValidator fileValidator = new FileValidator();
@@ -41,8 +42,18 @@ public class FileInput implements Input {
     }
 
     @Override
+    public String getNextNumberMessage() {
+        return NEXT_NUMBER_MESSAGE;
+    }
+
+    @Override
     public String getNextNumber() {
         return null;
+    }
+
+    @Override
+    public void setNextNumber() {
+
     }
 
     public List<String> getFilePaths() {

@@ -16,17 +16,17 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertNotNull;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-
-//import org.karen.numtowords.io.testdoubles.TestInput;
 
 @RunWith(MockitoJUnitRunner.class)
 public class EngineTest {
@@ -45,7 +45,6 @@ public class EngineTest {
     private RegexEncoder encoder;
 
     private String[] commandLineArguments;
-
     private String dictionaryFile;
     private String dataFile1;
     private String dataFile2;
@@ -53,6 +52,9 @@ public class EngineTest {
     @Before
     public void setup() throws IOException {
         MockitoAnnotations.initMocks(this);
+
+        when(userInput.getType()).thenReturn(Input.Type.USER);
+        when(userInput.getNextNumberMessage()).thenReturn("Enter next number:");
 
         engine = new Engine();
 
@@ -181,25 +183,45 @@ public class EngineTest {
     }
 
     @Test
-    public void requestsThenProcessesNumberProvidedByUserFromCommandLine() {
+    public void exitsWhenExitValueIsEnteredOnCommandLine() {
+        engine.setOutput(consoleOutput);
+        engine.setInputToUser(userInput);
+
+        when(userInput.getNextNumber()).thenReturn("quit");
+
+        boolean hasNextNumber = engine.hasNextNumber();
+
+        assertThat(hasNextNumber, is(false));
+    }
+
+    @Test
+    public void setsNextNumberWhenUserEntersAnythingButExitValue() {
+        engine.setOutput(consoleOutput);
+        engine.setInputToUser(userInput);
+
+        when(userInput.getNextNumber()).thenReturn("123");
+
+        boolean hasNextNumber = engine.hasNextNumber();
+
+        assertThat(hasNextNumber, is(true));
+    }
+
+    @Test
+    public void writesEncodingResultForProvidedNumber() throws FileNotFoundException {
         engine.setOutput(consoleOutput);
         engine.setInputToUser(userInput);
         engine.setEncoder(encoder);
 
-        String number = "2256";
-        List<String> matches = new ArrayList<String>();
-        matches.add("CALL");
+        String number = "234";
+        List<String> results = Arrays.asList("CALL");
 
-        when(userInput.getType()).thenReturn(Input.Type.USER);
         when(userInput.getNextNumber()).thenReturn(number);
-        when(encoder.encode(number)).thenReturn(matches);
+        when(encoder.encode(anyString())).thenReturn(results);
 
-        engine.processNumbers();
+        engine.encodeNumberAndOutputResult();
 
-        verify(consoleOutput).write(Engine.REQUEST_NUMBER_MESSAGE);
-        verify(userInput).getNextNumber();
         verify(encoder).encode(number);
-        verify(consoleOutput).writeEncodingResults(number, matches);
+        verify(consoleOutput).writeEncodingResults(number, results);
     }
 
 }
