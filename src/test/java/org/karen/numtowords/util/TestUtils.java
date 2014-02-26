@@ -4,8 +4,7 @@ import java.io.*;
 
 public class TestUtils {
 
-    public static File createTempFileWithProvidedLines(String fileName, String... lines)
-            throws IOException {
+    public static File createTempFileWithProvidedLines(String fileName, String... lines) throws IOException {
 
         File tempFile = File.createTempFile(fileName, ".txt");
         tempFile.deleteOnExit();

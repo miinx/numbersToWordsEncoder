@@ -1,10 +1,12 @@
 package org.karen.numtowords.io.input;
 
 import org.karen.numtowords.exception.FileNotValidException;
+import org.karen.numtowords.validation.DataType;
 import org.karen.numtowords.validation.FileValidator;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
 import java.util.Scanner;
@@ -36,8 +38,8 @@ public class FileInput implements Input {
     }
 
     @Override
-    public Type getType() {
-        return Type.FILE;
+    public DataType getType() {
+        return DataType.FILE;
     }
 
     @Override
@@ -68,8 +70,7 @@ public class FileInput implements Input {
         return filePaths;
     }
 
-    private void setReader(String filePath)
-            throws IOException, FileNotValidException {
+    private void setReader(String filePath) throws IOException, FileNotValidException {
         loadNextFile(filePath);
         validateFile(filePath);
         filesLoaded++;
@@ -79,17 +80,13 @@ public class FileInput implements Input {
         return filePaths.size() > filesLoaded;
     }
 
-    private void loadNextFile(String filePath)
-            throws IOException {
-
+    private void loadNextFile(String filePath) throws FileNotFoundException {
         fileInputStream = fileValidator.getFileInputStream(filePath);
         reader = new Scanner(new File(filePath));
     }
 
-    private void validateFile(String filePath)
-            throws IOException, FileNotValidException {
-
-        fileValidator.validate(filePath, fileInputStream, Type.FILE);
+    private void validateFile(String filePath) throws IOException, FileNotValidException {
+        fileValidator.validate(filePath, fileInputStream, DataType.FILE);
     }
 
 }

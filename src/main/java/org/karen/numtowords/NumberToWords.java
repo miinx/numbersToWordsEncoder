@@ -7,19 +7,16 @@ import java.io.IOException;
 
 public class NumberToWords {
 
-    private Engine engine;
-
-    public static void main(String[] args)
-            throws IOException, FileNotValidException {
+    public static void main(String[] args) throws IOException, FileNotValidException {
 
         NumberToWords numberToWords = new NumberToWords();
         numberToWords.run(args);
+
     }
 
-    public void run(String[] args)
-            throws IOException, FileNotValidException {
+    public void run(String[] args) throws IOException, FileNotValidException {
 
-        this.engine = new Engine();
+        Engine engine = new Engine();
 
         engine.configure(args);
         engine.writeWelcomeMessage();

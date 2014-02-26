@@ -27,6 +27,7 @@ public class FileInputTest {
 
     @Test
     public void createsReaderForExistingFile() throws IOException, FileNotValidException {
+
         String validFile = TestUtils.createTempFileWithProvidedLines("numbers", "123").getPath();
         files.add(validFile);
 
@@ -37,6 +38,7 @@ public class FileInputTest {
 
     @Test(expected = FileNotFoundException.class)
     public void throwsExceptionForNonexistentNumbersDataFile() throws IOException, FileNotValidException {
+
         files.add("does-not-exist.txt");
 
         input = FileInput.loadFiles(files);
@@ -44,6 +46,7 @@ public class FileInputTest {
 
     @Test(expected = FileNotValidException.class)
     public void throwsExceptionForInvalidNumbersDataFileContainingWords() throws IOException, FileNotValidException {
+
         String invalidFile = TestUtils.createTempFileWithProvidedLines("test", "foo").getPath();
         files.add(invalidFile);
 
@@ -52,6 +55,7 @@ public class FileInputTest {
 
     @Test
     public void getsNextNumberInCurrentFile() throws IOException, FileNotValidException {
+
         String validFile = TestUtils.createTempFileWithProvidedLines("numbers", "123").getPath();
         files.add(validFile);
 
@@ -64,6 +68,7 @@ public class FileInputTest {
 
     @Test
     public void getsNextNumberFromNextFileWhenCurrentFileHasNoMoreLines() throws IOException, FileNotValidException {
+
         String file1 = TestUtils.createTempFileWithProvidedLines("numbers1").getPath();
         String file2 = TestUtils.createTempFileWithProvidedLines("numbers2", "456").getPath();
         files.add(file1);
@@ -78,6 +83,7 @@ public class FileInputTest {
 
     @Test
     public void setsNextNumberToExitValueWhenNoMoreFilesWithNumbers() throws IOException, FileNotValidException {
+
         String file1 = TestUtils.createTempFileWithProvidedLines("numbers1").getPath();
         String file2 = TestUtils.createTempFileWithProvidedLines("numbers2").getPath();
         files.add(file1);

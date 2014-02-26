@@ -3,6 +3,7 @@ package org.karen.numtowords.app;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.karen.numtowords.dictionary.DefaultDictionary;
 import org.karen.numtowords.dictionary.Dictionary;
 import org.karen.numtowords.encoder.RegexEncoder;
 import org.karen.numtowords.exception.FileNotValidException;
@@ -12,6 +13,7 @@ import org.karen.numtowords.io.input.UserInput;
 import org.karen.numtowords.io.output.ConsoleOutput;
 import org.karen.numtowords.io.testdoubles.TestOutput;
 import org.karen.numtowords.util.TestUtils;
+import org.karen.numtowords.validation.DataType;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -40,7 +42,7 @@ public class EngineTest {
     @Mock
     private FileInput fileInput;
     @Mock
-    private Dictionary dictionary;
+    private DefaultDictionary dictionary;
     @Mock
     private RegexEncoder encoder;
 
@@ -53,7 +55,7 @@ public class EngineTest {
     public void setup() throws IOException {
         MockitoAnnotations.initMocks(this);
 
-        when(userInput.getType()).thenReturn(Input.Type.USER);
+        when(userInput.getType()).thenReturn(DataType.USER);
         when(userInput.getNextNumberMessage()).thenReturn("Enter next number:");
 
         engine = new Engine();
@@ -65,6 +67,7 @@ public class EngineTest {
 
     @Test
     public void displaysWelcomeMessage() {
+
         TestOutput testOutput = new TestOutput();
         engine.setOutput(testOutput);
 
@@ -75,30 +78,27 @@ public class EngineTest {
 
 
     @Test
-    public void setInputToUserInputWhenNoArgumentsGiven()
-            throws IOException, FileNotValidException {
+    public void setInputToUserInputWhenNoArgumentsGiven() throws IOException, FileNotValidException {
 
         commandLineArguments = new String[0];
 
         engine.configure(commandLineArguments);
 
-        assertThat(engine.getInput().getType(), is(Input.Type.USER));
+        assertThat(engine.getInput().getType(), is(DataType.USER));
     }
 
     @Test
-    public void setsDictionaryToSystemDictionaryWhenNoArgumentsGiven()
-            throws IOException, FileNotValidException {
+    public void setsDictionaryToSystemDictionaryWhenNoArgumentsGiven() throws IOException, FileNotValidException {
 
         commandLineArguments = new String[0];
 
         engine.configure(commandLineArguments);
 
-        assertThat(engine.getDictionary().getDictionaryFile().getPath(), is(Dictionary.MACOSX_SYSTEM_DICTIONARY_PATH));
+        assertThat(engine.getDictionary().getDictionaryFile().getPath(), is(DefaultDictionary.SYSTEM_DICTIONARY_PATH));
     }
 
     @Test
-    public void setsDictionaryToCustomDictionaryWhenDictionaryArgumentsGiven()
-            throws IOException, FileNotValidException {
+    public void setsDictionaryToCustomDictionaryWhenDictionaryArgumentsGiven() throws IOException, FileNotValidException {
 
         commandLineArguments = new String[]{"-d", dictionaryFile};
 
@@ -108,38 +108,25 @@ public class EngineTest {
     }
 
     @Test
-    public void setsInputToFileInputWhenCommandLineFileArgumentGiven()
-            throws IOException, FileNotValidException {
+    public void setsInputToFileInputWhenCommandLineFileArgumentGiven() throws IOException, FileNotValidException {
 
         commandLineArguments = new String[]{dataFile1};
 
         engine.configure(commandLineArguments);
 
         Input input = engine.getInput();
-        assertThat(input.getType(), is(Input.Type.FILE));
+        assertThat(input.getType(), is(DataType.FILE));
     }
 
     @Test
-    public void setsDictionaryToSystemDictionaryWhenFileArgumentsProvidedDoNotIncludeADictionary()
-            throws IOException, FileNotValidException {
-
-        commandLineArguments = new String[]{dataFile1};
-
-        engine.configure(commandLineArguments);
-
-        assertThat(engine.getDictionary().getDictionaryFile().getPath(), is(Dictionary.MACOSX_SYSTEM_DICTIONARY_PATH));
-    }
-
-    @Test
-    public void setsInputToFileInputWhenMultipleCommandLineFileArgumentsGiven()
-            throws IOException, FileNotValidException {
+    public void setsInputToFileInputWhenMultipleCommandLineFileArgumentsGiven() throws IOException, FileNotValidException {
 
         commandLineArguments = new String[]{dataFile1, dataFile2};
 
         engine.configure(commandLineArguments);
 
         Input input = engine.getInput();
-        assertThat(input.getType(), is(Input.Type.FILE));
+        assertThat(input.getType(), is(DataType.FILE));
 
         FileInput fileInput = (FileInput) input;
         assertThat(fileInput.getFilePaths().size(), is(2));
@@ -148,8 +135,17 @@ public class EngineTest {
     }
 
     @Test
-    public void setsCustomDictionaryAndFileInputTypeWhenBothArgumentTypesGivenWithDictionaryFirst()
-            throws IOException, FileNotValidException {
+    public void setsDictionaryToSystemDictionaryWhenArgumentsProvidedDoNotIncludeADictionary() throws IOException, FileNotValidException {
+
+        commandLineArguments = new String[]{dataFile1};
+
+        engine.configure(commandLineArguments);
+
+        assertThat(engine.getDictionary().getDictionaryFile().getPath(), is(DefaultDictionary.SYSTEM_DICTIONARY_PATH));
+    }
+
+    @Test
+    public void setsCustomDictionaryAndDataFilesWhenBothArgumentTypesGivenWithDictionaryFirst() throws IOException, FileNotValidException {
 
         commandLineArguments = new String[]{"-d", dictionaryFile, dataFile1};
 
@@ -164,8 +160,7 @@ public class EngineTest {
     }
 
     @Test
-    public void setsCustomDictionaryAndFileInputTypeWhenBothArgumentTypesGivenWithDictionaryLast()
-            throws IOException, FileNotValidException {
+    public void setsCustomDictionaryAndDataFilesWhenBothArgumentTypesGivenWithDictionaryLast() throws IOException, FileNotValidException {
 
         commandLineArguments = new String[]{dataFile1, "-d", dictionaryFile};
 
@@ -176,17 +171,33 @@ public class EngineTest {
         assertThat(fileNames.size(), is(1));
         assertThat(fileNames.get(0), is(dataFile1));
 
-        assertThat(engine.getDictionary().getDictionaryFile().getPath(), is(dictionaryFile));
+        Dictionary dictionary = engine.getDictionary();
+        assertThat(dictionary.getDictionaryFile().getPath(), is(dictionaryFile));
     }
 
+    @Test
+    public void setsCustomDictionaryAndDataFilesWhenBothArgumentTypesGivenWithDictionaryInMiddle() throws IOException, FileNotValidException {
+
+        commandLineArguments = new String[]{dataFile1, "-d", dictionaryFile, dataFile2};
+
+        engine.configure(commandLineArguments);
+
+        FileInput input = (FileInput) engine.getInput();
+        List<String> fileNames = input.getFilePaths();
+        assertThat(fileNames.size(), is(2));
+        assertThat(fileNames.get(0), is(dataFile1));
+        assertThat(fileNames.get(1), is(dataFile2));
+
+        Dictionary dictionary = engine.getDictionary();
+        assertThat(dictionary.getDictionaryFile().getPath(), is(dictionaryFile));
+
+    }
 
     @Test
-    public void createsEngineForConsoleOutputAsDefault()
-            throws IOException, FileNotValidException {
+    public void createsEngineForConsoleOutputAsDefault() throws IOException, FileNotValidException {
 
         commandLineArguments = new String[0];
 
-        // use a new engine for this test, to avoid setting the output to TestOutput in before()
         engine = new Engine();
         engine.configure(commandLineArguments);
 
@@ -195,6 +206,7 @@ public class EngineTest {
 
     @Test
     public void exitsWhenNextNumberEqualsExitValue() throws IOException, FileNotValidException {
+
         engine.setOutput(consoleOutput);
         engine.setInput(userInput);
 
@@ -207,6 +219,7 @@ public class EngineTest {
 
     @Test
     public void setsNextNumberWhenUserEntersAnythingButExitValue() throws IOException, FileNotValidException {
+
         engine.setOutput(consoleOutput);
         engine.setInput(userInput);
 
@@ -219,6 +232,7 @@ public class EngineTest {
 
     @Test
     public void writesEncodingResultForProvidedNumber() throws FileNotFoundException {
+
         engine.setOutput(consoleOutput);
         engine.setInput(userInput);
         engine.setEncoder(encoder);
@@ -236,7 +250,8 @@ public class EngineTest {
     }
 
     @Test
-    public void setsNextNumberWhenInputTypeIsFileAndCurrentFileHasMoreNumbers() throws IOException, FileNotValidException {
+    public void setsNextNumberWhenDataTypeIsFileAndCurrentFileHasMoreNumbers() throws IOException, FileNotValidException {
+
         engine.setInput(fileInput);
         engine.setOutput(consoleOutput);
 

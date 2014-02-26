@@ -1,5 +1,7 @@
 package org.karen.numtowords.io.input;
 
+import org.karen.numtowords.validation.DataType;
+
 import java.util.Scanner;
 
 public class UserInput implements Input {
@@ -24,12 +26,12 @@ public class UserInput implements Input {
     }
 
     @Override
-    public Type getType() {
-        return Type.USER;
+    public DataType getType() {
+        return DataType.USER;
     }
 
     @Override
-    public String getNextNumberMessage() {      // todo may not need this
+    public String getNextNumberMessage() {
         return NEXT_NUMBER_MESSAGE;
     }
 

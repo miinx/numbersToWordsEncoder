@@ -1,5 +1,6 @@
 package org.karen.numtowords.app;
 
+import org.karen.numtowords.dictionary.DefaultDictionary;
 import org.karen.numtowords.dictionary.Dictionary;
 import org.karen.numtowords.encoder.Encoder;
 import org.karen.numtowords.encoder.RegexEncoder;
@@ -69,7 +70,7 @@ public class Engine {
     }
 
     private void setSystemDictionary() throws IOException, FileNotValidException {
-        dictionary = Dictionary.load(Dictionary.MACOSX_SYSTEM_DICTIONARY_PATH);
+        dictionary = DefaultDictionary.load(DefaultDictionary.SYSTEM_DICTIONARY_PATH);
     }
 
     private void processArgs(String[] args) throws IOException, FileNotValidException {
@@ -96,7 +97,7 @@ public class Engine {
 
     private void setUserDictionary(String dictionaryFile) throws IOException, FileNotValidException {
         try {
-            dictionary = Dictionary.load(dictionaryFile);
+            dictionary = DefaultDictionary.load(dictionaryFile);
         } catch (Exception e) {
             output.write(e.getMessage());
         }

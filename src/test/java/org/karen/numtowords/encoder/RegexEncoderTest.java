@@ -1,11 +1,10 @@
 package org.karen.numtowords.encoder;
 
 import org.junit.Test;
-import org.karen.numtowords.dictionary.Dictionary;
+import org.karen.numtowords.dictionary.DefaultDictionary;
 import org.karen.numtowords.exception.FileNotValidException;
 import org.karen.numtowords.util.TestUtils;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
@@ -15,12 +14,9 @@ import static org.hamcrest.core.Is.is;
 public class RegexEncoderTest {
 
     private RegexEncoder encoder;
-    private Dictionary  dictionary;
-    private File testDictionary;
 
     @Test
-    public void encodesSimpleValidNumber()
-            throws IOException, FileNotValidException {
+    public void encodesSimpleValidNumber() throws IOException, FileNotValidException {
 
         encoder = createRegexEncoderWithDictionaryContainingLines("cat");
 
@@ -31,8 +27,7 @@ public class RegexEncoderTest {
     }
 
     @Test
-    public void encodesValidNumberWithAllEncodableDigitsUsed()
-            throws IOException, FileNotValidException {
+    public void encodesValidNumberWithAllEncodableDigitsUsed() throws IOException, FileNotValidException {
 
         encoder = createRegexEncoderWithDictionaryContainingLines("questionably", "notamatch");
 
@@ -43,8 +38,7 @@ public class RegexEncoderTest {
     }
 
     @Test
-    public void returnsZeroResultsForInvalidNumber()
-            throws IOException, FileNotValidException {
+    public void returnsZeroResultsForInvalidNumber() throws IOException, FileNotValidException {
 
         encoder = createRegexEncoderWithDictionaryContainingLines("cat");
 
@@ -54,8 +48,7 @@ public class RegexEncoderTest {
     }
 
     @Test
-    public void returnsResultInUppercaseAndSorted()
-            throws IOException, FileNotValidException {
+    public void returnsResultInUppercaseAndSorted() throws IOException, FileNotValidException {
 
         encoder = createRegexEncoderWithDictionaryContainingLines("then", "there", "them", "thence");
 
@@ -67,12 +60,9 @@ public class RegexEncoderTest {
     }
 
     @Test
-    public void removesPunctuationAndWhitespaceFromNumber()
-            throws IOException, FileNotValidException {
+    public void removesPunctuationAndWhitespaceFromNumber() throws IOException, FileNotValidException {
 
-        testDictionary = TestUtils.createTempFileWithProvidedLines("testDictionary", "barn", "barren");
-        dictionary = Dictionary.loadFile(testDictionary);
-        encoder = RegexEncoder.load(dictionary);
+        encoder = createRegexEncoderWithDictionaryContainingLines("barn", "barren");
 
         List<String> matches = encoder.encode(" 227- 6 ");
 
@@ -81,8 +71,7 @@ public class RegexEncoderTest {
     }
 
     @Test
-    public void leavesDigits1And0InPlace()
-            throws IOException, FileNotValidException {
+    public void leavesDigits1And0InPlace() throws IOException, FileNotValidException {
 
         encoder = createRegexEncoderWithDictionaryContainingLines("fan", "dam", "it");
 
@@ -94,8 +83,7 @@ public class RegexEncoderTest {
     }
 
     @Test
-    public void onlyMatchesWordsEqualInLengthToSourceNumber()   // currently!
-            throws IOException, FileNotValidException {
+    public void onlyMatchesWordsEqualInCombinedLengthToSourceNumber() throws IOException, FileNotValidException {   // currently!
 
         encoder = createRegexEncoderWithDictionaryContainingLines("and", "dam", "dame", "dames", "fame", "famed", "famous");
 
@@ -107,22 +95,22 @@ public class RegexEncoderTest {
     }
 
     @Test
-    public void combinesUpTo2WordsForMatchIfWordLengthIsShorterThanNumberLength()
-            throws IOException, FileNotValidException {
+    public void combinesUpTo2WordsForMatchIfFirstWordLengthIsShorterThanNumberLength() throws IOException, FileNotValidException {
 
-        encoder = createRegexEncoderWithDictionaryContainingLines("call", "bb", "me", "joe", "klod", "cal");
+        encoder = createRegexEncoderWithDictionaryContainingLines("alloy", "b", "bb", "cal", "call", "callo", "joy", "klox", "oz", "x");
 
-        List<String> matches = encoder.encode("225563");
+        List<String> matches = encoder.encode("225569");
 
-        assertThat(matches.size(), is(3));
-        assertThat(matches.get(0), is("BB-KLOD"));
-        assertThat(matches.get(1), is("CAL-JOE"));
-        assertThat(matches.get(2), is("CALL-ME"));
+        assertThat(matches.size(), is(5));
+        assertThat(matches.get(0), is("B-ALLOY"));
+        assertThat(matches.get(1), is("BB-KLOX"));
+        assertThat(matches.get(2), is("CAL-JOY"));
+        assertThat(matches.get(3), is("CALL-OZ"));
+        assertThat(matches.get(4), is("CALLO-X"));
     }
 
     @Test
-    public void doesNotReturnMatchesForSecondWordInMultipleWordMatchIfFirstWordHasNone()
-            throws IOException, FileNotValidException {
+    public void doesNotReturnMatchesForSecondWordInMultipleWordMatchIfFirstWordHasNone() throws IOException, FileNotValidException {
 
         encoder = createRegexEncoderWithDictionaryContainingLines("me");
 
@@ -131,11 +119,9 @@ public class RegexEncoderTest {
         assertThat(matches.size(), is(0));
     }
 
-    private RegexEncoder createRegexEncoderWithDictionaryContainingLines(String... lines)
-            throws IOException, FileNotValidException {
-
-        testDictionary = TestUtils.createTempFileWithProvidedLines("testDictionary", lines);
-        dictionary = Dictionary.loadFile(testDictionary);
+    private RegexEncoder createRegexEncoderWithDictionaryContainingLines(String... lines) throws IOException, FileNotValidException {
+        String testDictionary = TestUtils.createTempFileWithProvidedLines("testDictionary", lines).getPath();
+        DefaultDictionary dictionary = DefaultDictionary.load(testDictionary);
         return RegexEncoder.load(dictionary);
     }
 

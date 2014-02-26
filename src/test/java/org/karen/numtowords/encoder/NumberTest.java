@@ -12,13 +12,10 @@ import static org.junit.Assert.assertNotNull;
 
 public class NumberTest {
 
-    private Number number;
-
     @Test
-    public void createsNumbersToLettersMap()
-            throws IOException, FileNotValidException {
+    public void createsNumbersToLettersMap() throws IOException, FileNotValidException {
 
-        number = new Number("2");
+        Number number = new Number("2");
 
         Map<Character, String> numbersToLetters = number.getEncodingMap();
 

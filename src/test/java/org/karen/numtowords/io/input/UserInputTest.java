@@ -2,6 +2,7 @@ package org.karen.numtowords.io.input;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.karen.numtowords.validation.DataType;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -16,8 +17,8 @@ public class UserInputTest {
     }
 
     @Test
-    public void identifiesAsUserInputType() {
-        assertEquals(Input.Type.USER, input.getType());
+    public void identifiesAsUserDataType() {
+        assertEquals(DataType.USER, input.getType());
     }
 
     @Test
